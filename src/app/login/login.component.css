@@ -1,0 +1,39 @@
+body{
+  text-align: center;
+}
+
+h3{
+  color:#ededed;
+}
+
+h3, input.login-form-input{
+  margin:unset auto;
+}
+
+form#login{
+  text-align: center;
+  background-color: #121212;
+  color:#ededed;
+  padding:2vh;
+  margin:0 auto;
+}
+
+.login-form {
+  max-width: 300px;
+}
+
+.login-form input
+
+.login-form-margin {
+  margin-bottom: 16px;
+}
+
+.login-form-forgot {
+  float: right;
+}
+
+.login-form-button {
+  width: 30%;
+}
+
+@import "/node_modules/ng-zorro-antd/ng-zorro-antd.min.css";

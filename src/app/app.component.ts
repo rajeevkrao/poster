@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component,isDevMode } from '@angular/core';
+import { ApiService } from './api.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
   title = 'poster';
+  test = 'Server is Offline';
+
+  constructor(protected testApi: ApiService) {}
+
+  ngOnInit(){
+    this.testApi.test().then(res=>{
+      this.test = "Server is Online";
+    })
+  }
 }
