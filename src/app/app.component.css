@@ -1,1 +1,55 @@
-@import "/node_modules/ng-zorro-antd/ng-zorro-antd.min.css";
+:root {
+  --primary-color: #{$primary-color};
+}
+
+a{text-decoration: none}
+
+.navbar .navs{
+  right:0;
+  margin:1vw;
+  position: absolute;
+}
+
+.navbar{
+  background-color: var(--primary-color);
+  color:var(--accent-color)
+}
+
+nz-tag{
+  border-radius: 1em;
+}
+
+.server-info{
+  position:fixed;
+  right:1vw;
+  bottom: 1vh;
+}
+
+.logo {
+  cursor:pointer;
+  color:#fff;
+  float: left;
+  margin-right:3vh;
+}
+
+[nz-menu] {
+  line-height: 64px;
+}
+
+nz-breadcrumb {
+  margin: 16px 0;
+}
+
+nz-content {
+  padding: 0 50px;
+}
+
+nz-footer {
+  text-align: center;
+}
+
+.inner-content {
+  background: #fff;
+  padding: 24px;
+  min-height: 280px;
+}

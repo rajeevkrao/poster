@@ -4,9 +4,9 @@ import { HttpClient } from "@angular/common/http"
 @Injectable({
   providedIn: 'root'
 })
-export class ApiService {
-  private apiUrl = '/api'
-  constructor(private http:HttpClient) {
+export class GlobalApiService {
+  protected apiUrl = '/api'
+  constructor(protected http:HttpClient) {
     if(isDevMode())
       this.apiUrl="http://localhost:5000/api"
   }
@@ -14,7 +14,7 @@ export class ApiService {
   test():Promise<void | any>{
     return new Promise((resolve,reject)=>{
       this.http
-        .post(this.apiUrl+"/test",{test:"test"},{responseType:'text'})
+        .post(this.apiUrl+"/test",{},{responseType:'text'})
         .subscribe({
           next:res=>resolve(res),
           error:err=>this.error(err,reject)
@@ -28,7 +28,17 @@ export class ApiService {
     })
   }
 
-  private error(error:any,reject?:any){
+  isSuperUser():Promise<void|any>{
+    return new Promise((resolve,reject)=>{
+      this.http.post(this.apiUrl+"/issuperuser",{},{withCredentials:true})
+      .subscribe({
+        next:res=>resolve(res),
+        error:err=>this.error(err,reject)
+      })
+    })
+  }
+
+  protected error(error:any,reject?:any){
     reject(error)
     let message = (error.message) ? error.message :
     error.status ? `${error.status} - ${error.statusText}` : 'Server error';

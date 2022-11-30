@@ -1,0 +1,34 @@
+<nz-tabset>
+  <nz-tab nzTitle="Invite Users">
+    <div nz-row nzJustify="end">
+    <div nz-col [nzSpan]="4">
+      <button nz-button nzType="primary">Invite User</button>
+    </div>
+    </div>
+    <nz-table #basicTable [nzData]="['']">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Accesses</th>
+          <th>Invitation Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{user.name}}</td>
+          <td>{{user.email}}</td>
+          <td style="display:inline-flex; word-wrap:break-word;"><p class="accesses" *ngFor="let item of user.accesses | keyvalue">{{item.key}}</p></td>
+          <td>{{user.invitationStatus}}</td>
+          <td><button>Edit</button></td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle="Create Channel">
+    Create Channel
+  </nz-tab>
+</nz-tabset>
+
+

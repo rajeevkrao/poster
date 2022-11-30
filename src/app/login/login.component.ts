@@ -1,24 +1,42 @@
-import { Component } from '@angular/core';
-import { FormBuilder, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, NgForm, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ApiService } from './api.service';
+import { Router } from "@angular/router"
 
 @Component({
-  selector: 'app-route',
+  selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit{
+  loginError:String = ""
   validateForm!: UntypedFormGroup;
-  checkoutForm = this.formBuilder.group({
-    email: '',
-    password: ''
-  });
   constructor(
-    private formBuilder: FormBuilder
+    private fb: UntypedFormBuilder,
+    private api:ApiService,
+    private router:Router
   ){
-    document.body.style.backgroundColor="#121212";
   }
 
-  onSubmit(){
+  ngOnInit(): void {
+    this.validateForm = this.fb.group({
+      email: [null, [Validators.required]],
+      password: [null, [Validators.required]],
+    });
+  }
 
+  submitForm():void{
+    let {email, password} = this.validateForm.value;
+    this.api.login(email,password).then(res=>{
+      this.loginError=""
+      this.router.navigate(["/admin"])
+    })
+    .catch(err=>{
+      this.loginError="Username or Password doesn't Exist"
+    })
+  }
+
+  onSubmit(form:NgForm){
+    
   }
 }

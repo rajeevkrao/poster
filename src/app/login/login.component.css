@@ -1,39 +1,22 @@
-body{
+form.login{
+  margin:15vh auto;
   text-align: center;
 }
 
-h3{
-  color:#ededed;
+.textInput{
+  width:60%;
 }
 
-h3, input.login-form-input{
-  margin:unset auto;
-}
-
-form#login{
+.form-container{
   text-align: center;
-  background-color: #121212;
-  color:#ededed;
-  padding:2vh;
-  margin:0 auto;
+  
 }
 
-.login-form {
-  max-width: 300px;
+form.login .error{
+  color:red;
 }
 
-.login-form input
+/* form.login h3{
+  color:white;
+} */
 
-.login-form-margin {
-  margin-bottom: 16px;
-}
-
-.login-form-forgot {
-  float: right;
-}
-
-.login-form-button {
-  width: 30%;
-}
-
-@import "/node_modules/ng-zorro-antd/ng-zorro-antd.min.css";

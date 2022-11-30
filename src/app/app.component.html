@@ -1,2 +1,29 @@
-<app-route></app-route>
+<!-- <mat-toolbar color="primary" class="navbar">
+  <span (click)="home()" class="top">{{title}}</span>
+  <span class="navs">
+    <a *ngIf="ngRoute != '/login'" href="/login"><button id="login" mat-raised-button color="success">Login</button></a>
+  </span>
+</mat-toolbar> -->
+
+<nz-layout>
+  <nz-header>
+    <div class="logo">{{title}}</div>
+    <ul nz-menu nzTheme="dark" nzMode="horizontal">
+      <li (click)="route('/')" *ngIf="ngRoute != '/'" nz-menu-item>Home</li>
+      <li (click)="route('/admin')" *ngIf="ngRoute != '/admin' && loggedIn && isSuperUser" nz-menu-item>Admin</li>
+      <li (click)="route('/login')" *ngIf="ngRoute != '/login' && !loggedIn" nz-menu-item>Login</li>
+      <li (click)="route('/logout')" *ngIf="loggedIn" nz-menu-item>Logout</li>
+    </ul>
+  </nz-header>
+  <nz-content>
+    <router-outlet></router-outlet>
+  </nz-content>
+  <nz-footer></nz-footer>
+</nz-layout>
+
+<!-- <mat-chip selected color="primary" class="server-info">Server: {{test}}</mat-chip> -->
+
+<nz-tag (click)="runTest()" class="server-info" [nzColor]="test?'#00ff00':'#ff0000'">Server: {{test?'Online':'Offline'}}</nz-tag>
+
+
 

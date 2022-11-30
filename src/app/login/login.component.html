@@ -1,40 +1,35 @@
+<link
+  rel="stylesheet"
+  href="/nz-form.css"/>
 
 
-<!-- <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
-  <label for="email">Email</label><br>
-  <input type="email" name="email" /><br/>
-  <label for="password">Password</label><br>
-  <input type="password" name="password" /><br/>
-</form> -->
+<div nz-row nzJustify="space-evenly">
+<div nz-col nzSpan="12" class="form-container">
+  <form [formGroup]="validateForm" #f="ngForm" class="login" (ngSubmit)="submitForm()" nz-form>
+    <h3>User Login</h3>
+    <nz-form-item>
+      <nz-form-control nzErrorTip="Please enter Valid Email!">
+        <nz-input-group nzPrefixIcon="mail">
+          <input class="textInput" email formControlName="email" nz-input type="email" placeholder="Email" />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control nzErrorTip="Please input your Password!">
+        <nz-input-group nzPrefixIcon="lock">
+          <input class="textInput" formControlName="password" nz-input type="password" placeholder="Password" />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary" [disabled]="!validateForm.valid">Log in</button>
+      </nz-form-control>
+    </nz-form-item>
+    <h4 class="error">{{loginError}}</h4>
+  </form>
+</div>
+</div>
 
-<form id="login" nz-form [formGroup]="checkoutForm" class="login-form" (ngSubmit)="onSubmit()">
-  <h3>Login</h3>
-  <nz-form-item>
-    <nz-form-control nzErrorTip="Please input your username!">
-      <nz-input-group nzPrefixIcon="user">
-        <input nz-input class="login-form-input" type="text" nz-input formControlName="email" placeholder="Username" />
-      </nz-input-group>
-    </nz-form-control>
-  </nz-form-item>
-  <nz-form-item>
-    <nz-form-control nzErrorTip="Please input your Password!">
-      <nz-input-group nzPrefixIcon="lock">
-        <input nz-input class="login-form-input" type="password" nz-input formControlName="password" placeholder="Password" />
-      </nz-input-group>
-    </nz-form-control>
-  </nz-form-item>
-  <!-- <div nz-row class="login-form-margin">
-    <div nz-col [nzSpan]="12">
-      <label nz-checkbox formControlName="remember">
-        <span>Remember me</span>
-      </label>
-    </div>
-    <div nz-col [nzSpan]="12">
-      <a class="login-form-forgot">Forgot password</a>
-    </div>
-  </div> -->
-  <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">Log in</button>
-  <!-- Or
-  <a>register now!</a> -->
-</form>
+
 
