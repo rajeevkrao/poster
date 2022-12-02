@@ -8,6 +8,9 @@ class Mongo{
   constructor(){
     this.uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0.tkwubms.mongodb.net/?retryWrites=true&w=majority`
     this.client = new MongoClient(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    this.client.connect().then(()=>{
+      console.log("Database Connected")
+    })
   }
 
   connect(){
@@ -16,13 +19,9 @@ class Mongo{
     })
   }
 
-  
-
   async channelList(){
     try{
-      await this.client.connect();
       let collections = await this.client.db("channels").listCollections().toArray();
-      this.client.close();
       return collections.map(collection=>{
         return collection.name;
       })
@@ -42,15 +41,26 @@ class Mongo{
     }) */
   }
 
-  async createUser(name, email, passHash, options){
+  async getMetaChannel(channel){
     try{
+      let doc = this.client.db("channels").collection(channel).findOne({meta:true},{creationTimestamp:1,createdBy:1})
+      return doc
+    }
+    catch(err){
+      console.log(doc)
+    }
+  }
+
+  async createUser(name, email, options){
+    try{      
       let doc = {
         name,
-        email,
-        passHash
+        email
       }
-      if(options && options.superUser)
-      doc.superUser = true;
+      if(options?.passHash) doc.passHash = options.passHash
+      if(options?.superUser) doc.superUser = true;
+      else doc.invitationStatus = false;
+      if(options?.accesses) doc.accesses = options.accesses
       let mDoc = await this.client.db('meta').collection('users').insertOne(doc)
       return mDoc;
     }
@@ -59,9 +69,72 @@ class Mongo{
     }
   }
 
+  async updateUser(name, email, options){
+    try{      
+      let doc = {
+        name,
+        email
+      }
+      if(options?.accesses) doc.accesses = options.accesses
+      let mDoc = await this.client.db('meta').collection('users').findOneAndUpdate({email:email},{$set:doc})
+      return mDoc;
+    }
+    catch(err){
+      return {err}
+    }
+  }
+
+  async deleteUser(id){
+    try{
+      let doc = await this.client.db("meta").collection('users').deleteOne({_id:ObjectId(id)})
+      return doc
+    }
+    catch(err){
+      console.log(err)
+    }
+  }
+
+  async addChannel(name){
+    try{
+      let doc = await this.client.db("channels").createCollection(name)
+      console.log(doc)
+      return doc
+    }
+    catch(err){
+      console.log(err)
+    }
+  }
+
+  async getUserById(id){
+    try{
+      let doc = await this.client.db("meta").collection("users").findOne({_id:ObjectId(id)})
+      if(doc=[])
+        throw new Error("Super User Doesn't Exist")
+      return doc
+    }
+    catch(err){
+      if(err.message=="Super User Doesn't Exist")
+        {}
+    }
+  }
+
+  async deleteChannel(name){
+    try{
+      await this.client.db("channels").collection(name).drop();
+      return {acknowledged:true}
+    }
+    catch(err){
+      console.log(err)
+    }
+    
+    
+  }
+
   async verifySuperUser(email){
     try{
+      
       let doc = await this.client.db("meta").collection("users").findOne({email},{superUser:1})
+      this.client.close();
       if(doc?.superUser)
         return true
       else  
@@ -74,7 +147,9 @@ class Mongo{
 
   async getUserId(email){
     try{
+      
       let doc = await this.client.db("meta").collection("users").findOne({email},{_id:1})
+      
       if(!doc) throw new Error("No such User Exist")
       return doc._id.toString()
     }
@@ -85,7 +160,9 @@ class Mongo{
 
   async verifyUser(email, passHash){
     try{
+      
       let doc = await this.client.db('meta').collection('users').findOne({email},{passHash:1})
+      
       if(!doc)
         return false;
       if(passHash == doc.passHash)
@@ -100,7 +177,9 @@ class Mongo{
 
   async isUserSuperUser(id){
     try{
+      
       let doc = await this.client.db("meta").collection('users').findOne({_id:ObjectId(id)},{superUser:1})
+      
       if(!doc)
         return false;
       if(doc.superUser)
@@ -115,6 +194,7 @@ class Mongo{
 
   async getInvitedUsers(){
     try{
+      
       let doc = await this.client.db('meta').collection('users').aggregate([
         { $match: {superUser:{$ne:true}} },
         {
@@ -129,6 +209,7 @@ class Mongo{
           }
         }
       ]).toArray()
+      
       return doc;
     }
     catch(err){
@@ -139,7 +220,7 @@ class Mongo{
 
   async getClient(){
     try{
-      return await this.client.connect()
+      return await this.client
     }
     catch(err){
       console.log(err)

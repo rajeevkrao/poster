@@ -23,15 +23,16 @@ export class AppComponent {
     private router:Router,
     private cookieService:CookieService,
   ) {
-    router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e:any) => {
-       this.ngRoute=e.url;
-       this.checkServer();
-       this.checkLoginStatus();
-       this.checkSuperUser();
-      })
+    
   }
 
   ngOnInit(){
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e:any) => {
+      this.ngRoute=e.url;
+      this.checkServer();
+      this.checkLoginStatus();
+      this.checkSuperUser();
+     })
     this.checkServer();
     this.checkLoginStatus();
     this.checkSuperUser();

@@ -1,3 +1,11 @@
 p.accesses:not(:last-child)::after{
-  content:", "
+  content:",\00a0"
+}
+
+div.error{
+  color:red;
+}
+
+button.action{
+  margin:.2em
 }

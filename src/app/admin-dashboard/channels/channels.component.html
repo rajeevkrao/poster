@@ -1,0 +1,51 @@
+<div nz-row nzJustify="end">
+  <div nz-col [nzSpan]="4">
+    <button nz-button (click)="this.isChannelModalOpen=true" nzType="primary">Create Channel</button>
+  </div>
+</div>
+
+<nz-table [nzBordered]="true" #basicTable [nzData]="['']">
+  <thead>
+    <tr>
+      <th>Channel Name</th>
+      <th>Created By</th>
+      <th>Created At</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let channel of channels;let i = index;">
+      <td>{{channel.name}}</td>
+      <td>{{channel.createdBy}}</td>
+      <td>{{channel.date}}</td>
+      <td><button 
+        nz-button 
+        nzDanger 
+        nz-popconfirm
+        nzPopconfirmTitle="Are you Sure you want to delete this channel?"
+        (nzOnConfirm)="deleteChannelConfirm(channel.name)"
+        nzOkText="Yes"
+        nzCancelText="No"
+        class="action">
+          Delete
+        </button>
+        <!-- <button
+          nz-popconfirm
+          nzPopconfirmTitle="Are you Sure you want to delete this user?"
+          (nzOnConfirm)="deleteUserConfirm(user._id)"
+          (nzOnCancel)="deleteUserCancel()"
+          [nzOkDanger]="true"
+          nzOkText="Yes"
+          nzCancelText="No"
+          nzPopconfirmPlacement="top"
+          nz-button
+          nzDanger
+          class="action">
+            Delete
+        </button> -->
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+
+<app-channels-modal [(isModalOpen)]="isChannelModalOpen"></app-channels-modal>
