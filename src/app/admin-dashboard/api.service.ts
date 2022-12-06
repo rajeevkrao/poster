@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GlobalApiService } from '../globalApi.service';
 import { HttpClient } from "@angular/common/http"
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,16 +10,6 @@ export class ApiService extends GlobalApiService {
 
   constructor(protected override http:HttpClient) { 
     super(http);
-  }
-
-  jwtVerify(token:string):Promise<void|any>{
-    return new Promise((resolve,reject)=>{
-      this.http.post(this.apiUrl+'/jwtverify',{token},{responseType: 'text'})
-        .subscribe(({
-          next:res=>resolve(res),
-          error:err=>this.error(err,reject)
-        }))
-    })
   }
 
   getMetaChannels():Promise<void|any>{
@@ -89,5 +80,9 @@ export class ApiService extends GlobalApiService {
           error:err=>this.error(err,reject)
         })
     })
+  }
+
+  addChannel(name:string):Observable<void|any>{
+    return this.http.put(this.apiUrl+"/channels",{name},{withCredentials:true})
   }
 }

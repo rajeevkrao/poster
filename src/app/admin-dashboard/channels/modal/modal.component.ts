@@ -1,15 +1,18 @@
-import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
-import { MatGridTileHeaderCssMatStyler } from '@angular/material/grid-list';
+import { Component, Input, OnInit, OnChanges, EventEmitter, Output, SimpleChanges } from '@angular/core';
+import { RefreshService } from 'src/app/refresh.service';
+import { ApiService } from '../../api.service';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-channels-modal',
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css']
 })
-export class ModalComponent implements  OnInit{
+export class ModalComponent implements  OnInit,OnChanges{
   _isModalOpen: boolean=false;
   channelModalName:string = "";
   submitError:string="";
+
   @Input()
   set isModalOpen(val: boolean) {
     this.isModalOpenChange.emit(val);
@@ -18,10 +21,43 @@ export class ModalComponent implements  OnInit{
   get isModalOpen() {
     return this._isModalOpen;
   }
-  @Output()
-  isModalOpenChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() isModalOpenChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  constructor(
+    private api:ApiService,
+    private refreshService:RefreshService,
+    private message:NzMessageService
+  ){
+
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['isModalOpen'])
+      this.channelModalName=""
+  }
 
   ngOnInit():void{
+  }
+
+  handleModalOk(){
+    this.channelModalName=this.channelModalName.trim()
+    if(this.channelModalName==""){
+      this.submitError="Channel Name Cannot Be Empty"
+      return
+    }
+    this.submitError="" 
+    this.api.addChannel(this.channelModalName).subscribe({
+      next:res=>{
+        this.message.success(`Channel ${this.channelModalName} Created Successfully`)
+        this.refreshService.refreshChannels.next(true)
+        this.isModalOpen=false
+        /* this.channelModalName="" */
+      },error:err=>{
+        console.log(err)
+        if(err?.error?.error?.code==409) return this.message.error(err.error.error.message)
+        return this.message.error("Error Creating Channel")
+      }
+    })
   }
 
   closeModal(){

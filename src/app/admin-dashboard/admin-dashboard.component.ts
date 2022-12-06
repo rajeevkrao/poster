@@ -7,6 +7,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { IUser } from '../models/users.model'
 
+import { RefreshService } from '../refresh.service';
+
 @Component({
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
@@ -31,24 +33,43 @@ export class AdminDashboardComponent implements OnInit {
     private cookieService:CookieService,
     private api:ApiService,
     private message:NzMessageService,
+    private refreshService:RefreshService
   ){
     
   }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(){
     //Verifying jwt token
     this.api.jwtVerify(this.cookieService.get('session')).catch(err=>{
       this.router.navigate(['/login'])
     })
 
+    //Listening to Channels Changes
+    this.refreshService.refreshChannels.subscribe({
+      next:res=>loadData(this),
+      error:err=>console.log(err)
+    })
+
+    //load Channels and Users
+    async function loadData(classRef:any):Promise<void>{
+      await classRef.getChannels()
+      classRef.getUsers()
+    }
+
+    loadData(this);
+  }
+
     //Retrieving Channels
+  async getChannels(){
     await this.api.getChannels().then((res)=>{
       this.channels=res
     }).catch(err=>{
       this.message.error("Cannot Retreive Channels")
     })
+  }
 
-    //Retrieving Users
+  //Retrieving Users
+  getUsers(){
     this.api.getUsers().then((res)=>{
       this.users=res
       this.users.forEach((user,index)=>{
@@ -62,7 +83,6 @@ export class AdminDashboardComponent implements OnInit {
       console.log(err)
       this.message.error("Cannot Retreive Users")
     })
-
   }
 
   deleteUserConfirm(id:string){

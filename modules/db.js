@@ -43,7 +43,7 @@ class Mongo{
 
   async getMetaChannel(channel){
     try{
-      let doc = this.client.db("channels").collection(channel).findOne({meta:true},{creationTimestamp:1,createdBy:1})
+      let doc = await this.client.db("channels").collection(channel).findOne({meta:true},{creationTimestamp:1,createdBy:1})
       return doc
     }
     catch(err){
@@ -101,20 +101,34 @@ class Mongo{
       return doc
     }
     catch(err){
-      console.log(err)
+      if(err.code=="48")//Namespace Exists\Channel with same name exist already
+        return {error:{code:409,message:"Channel with that name already Exist"}} //Error 409 - Conflict
+      return {error:{code:500,message:"Channel Not Created"}} //Error 500 - Server Error
+    }
+  }
+
+  async addChannelMeta(channelName,createdBy,creationTimestamp){
+    try{
+      let doc = await this.client.db("channels").collection(channelName).insertOne({meta:true,createdBy,creationTimestamp})
+      return doc
+    }
+    catch(err){
+      return err;
     }
   }
 
   async getUserById(id){
     try{
       let doc = await this.client.db("meta").collection("users").findOne({_id:ObjectId(id)})
-      if(doc=[])
+      
+      if(doc==[])
         throw new Error("Super User Doesn't Exist")
       return doc
     }
     catch(err){
       if(err.message=="Super User Doesn't Exist")
-        {}
+        {return {error:{cause:err,message:err.message}}}
+      console.log(err)
     }
   }
 
@@ -145,10 +159,23 @@ class Mongo{
     }
   }
 
-  async getUserId(email){
+  async getUserIdByEmail(email){
     try{
       
       let doc = await this.client.db("meta").collection("users").findOne({email},{_id:1})
+      
+      if(!doc) throw new Error("No such User Exist")
+      return doc._id.toString()
+    }
+    catch(err){
+      console.log(err)
+    }
+  }
+
+  async getUserIdById(id){
+    try{
+      
+      let doc = await this.client.db("meta").collection("users").findOne({_id:ObjectId(id)},{_id:1})
       
       if(!doc) throw new Error("No such User Exist")
       return doc._id.toString()
@@ -218,6 +245,16 @@ class Mongo{
     }
   }
 
+  async verifyNewUser(id,passHash){
+    try{
+      let doc = await this.client.db("meta").collection("users").findOneAndUpdate({_id:ObjectId(id)},{$set:{passHash,invitationStatus:true}})
+      if(doc) return doc
+    }
+    catch(err){
+      return {error:{code:500,message:"Error Verifying New User"}}
+    }
+  }
+
   async getClient(){
     try{
       return await this.client
@@ -226,6 +263,8 @@ class Mongo{
       console.log(err)
     }
   }
+
+  
 
   error(err,reject){
     reject(err)

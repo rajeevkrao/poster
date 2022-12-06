@@ -17,14 +17,18 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { ChannelsComponent } from './channels/channels.component';
-import { ModalComponent } from './channels/modal/modal.component';
+import { ModalComponent as ChannelModalComponent } from './channels/modal/modal.component';
+import { UsersComponent } from './users/users.component';
+import { ModalComponent as UserModalComponent } from './users/modal/modal.component';
 
 
 @NgModule({
   declarations: [
     AdminDashboardComponent,
     ChannelsComponent,
-    ModalComponent
+    ChannelModalComponent,
+    UsersComponent,
+    UserModalComponent
   ],
   imports: [
     CommonModule,

@@ -16,8 +16,9 @@ form.login .error{
   color:red;
 }
 
-input.textInput{
-  
+div.label{
+  margin:1vh 0;
+  text-align:left;
 }
 
 /* form.login h3{

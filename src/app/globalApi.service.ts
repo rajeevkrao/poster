@@ -28,6 +28,16 @@ export class GlobalApiService {
     })
   }
 
+  jwtVerify(token:string):Promise<void|any>{
+    return new Promise((resolve,reject)=>{
+      this.http.post(this.apiUrl+'/jwtverify',{token},{responseType: 'text'})
+        .subscribe(({
+          next:res=>resolve(res),
+          error:err=>this.error(err,reject)
+        }))
+    })
+  }
+
   isSuperUser():Promise<void|any>{
     return new Promise((resolve,reject)=>{
       this.http.post(this.apiUrl+"/issuperuser",{},{withCredentials:true})

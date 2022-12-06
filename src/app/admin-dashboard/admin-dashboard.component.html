@@ -1,11 +1,14 @@
 <nz-tabset>
   <nz-tab nzTitle="Invite Users">
+    <app-users></app-users>
+    
     <div nz-row nzJustify="end">
     <div nz-col [nzSpan]="4">
       <button nz-button (click)="showInviteUserModal()" nzType="primary">Invite User</button>
     </div>
     </div>
-    <nz-table [nzBordered]="true" #basicTable [nzData]="['']">
+    <div *ngIf="!this.users.length">No Users Added Yet!</div>
+    <nz-table *ngIf="this.users.length" [nzBordered]="true" #basicTable [nzData]="['']">
       <thead>
         <tr>
           <th>Name</th>
@@ -50,9 +53,13 @@
   <ng-container *nzModalContent>
     <p>Name:</p>
     <input nz-input type="text" [(ngModel)]="inviteUserModalName"><br/><br/>
-    <p>Email:</p>
-    <input nz-input type="email" [(ngModel)]="inviteUserModalEmail"><br/><br/>
+    <ng-container *ngIf="this.inviteUserModalCreateMode">
+      <p>Email:</p>
+      <input nz-input type="email" [(ngModel)]="inviteUserModalEmail"><br/><br/>
+    </ng-container>
+    
     <p>Channel Access</p>
+    <div *ngIf="!this.channels.length">No Channles Added!</div>
     <nz-tabset>
       <nz-tab *ngFor="let channel of channels" [nzTitle]="channel">
         <label nz-checkbox [(ngModel)]="this.inviteUserModalAccesses[channel].read">Read</label> 
