@@ -54,21 +54,17 @@ app.post('/api/login',async(req,res)=>{
   console.log(verify)
   if(!verify) return res.sendStatus(403)
   let id = await dbase.getUserIdByEmail(email)
-  let su = await dbase.isUserSuperUser(id)
-  if(su)
-    res.cookie('session', jwt.sign({ id }, process.env.JWT_SECRET,{expiresIn:60*60*24*3})).json({redirect:'/admin'})
-  else
-    res.cookie('session', jwt.sign({ id }, process.env.JWT_SECRET,{expiresIn:60*60*24*3})).json({redirect:'/'})
+  if(!await dbase.isUserSuperUser(id)) res.cookie('session', jwt.sign({ id }, process.env.JWT_SECRET,{expiresIn:60*60*24*3})).json({redirect:'/'})
+  res.cookie('session', jwt.sign({ id }, process.env.JWT_SECRET,{expiresIn:60*60*24*3})).json({redirect:'/admin'})
+    
   
 })
 
 app.post('/api/users/invited',async(req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(await dbase.isUserSuperUser(decoded.id))
-      res.json(await dbase.getInvitedUsers())
-    else 
-      throw new Error("Unauthorised")
+    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorised")
+    res.json(await dbase.getInvitedUsers())
   }
   catch(err){
     res.sendStatus(403)
@@ -78,14 +74,10 @@ app.post('/api/users/invited',async(req,res)=>{
 app.delete('/api/users/invited',async(req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(await dbase.isUserSuperUser(decoded.id)){
-      let result = await dbase.deleteUser(req.body.id)
-      if(result.acknowledged)
-        res.json(result)
-      else
-       throw new Error("Some Error")
-    }
-    else throw new Error("Unauthorised")
+    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorised")
+    let result = await dbase.deleteUser(req.body.id)
+    if(!result.acknowledged) throw new Error("Some Error")
+    res.json(result)
   }
   catch(err){
     console.log(err)
@@ -96,84 +88,66 @@ app.delete('/api/users/invited',async(req,res)=>{
 app.put('/api/users/invited',async(req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(await dbase.isUserSuperUser(decoded.id)){
-      var { name, email, accesses } = req.body;
-      for(channel of Object.keys(accesses))
-        if(!accesses[channel].read && !accesses[channel].write && !accesses[channel].delete)
-          delete accesses[channel]
-      let result = await dbase.createUser(name,email,{accesses})
-      if(result.acknowledged){
-        let token = jwt.sign({email,action:"verification"},process.env.JWT_SECRET)
-        const request = mailjet.post("send",{version:'v3.1'})
-          .request({
-            "Messages":[{
-              "From": {
-                "Email": "rajeev@loyalytics.in",
-                "Name": "Poster"
-              },
-              "To": [
-                {
-                  "Email": email,
-                  "Name": name
-                }
-              ],
-              "Subject": "Poster Invitation",
-              "TextPart": "You have been invited to Poster",
-              "HTMLPart": `<div style="text-align:center;"><h3>You have been invited to Poster.<br/> Click on the link to Accept the Invitation<br/> <a href='${process.env.DOMAIN}/verify/?token=${token}'><button>Accept Invitation</button></a></h3></div>`,
-              "CustomID": "AppGettingStartedTest"
-            }]
-          })
-        request
-          .then(res=>{
-            console.log("Email sent")
-          })
-          .catch(error=>{
-          console.log("Unable to send Email");
-        })
-        res.sendStatus(200)
-      }
-      else if(result.err.code==11000)
-        throw new Error("Email Already Exist")
-      else
-        throw new Error("Error Occured")
-    }
-    else 
-      throw new Error("Unauthorised")
+    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorised")
+    var { name, email, accesses } = req.body;
+    for(channel of Object.keys(accesses))
+      if(!accesses[channel].read && !accesses[channel].write && !accesses[channel].delete)
+        delete accesses[channel]
+    let result = await dbase.createUser(name,email,{accesses})
+    if(!result.acknowledged && result.err.code==11000) throw new Error("Email Already Exist")
+    if(!result.acknowledged) throw new Error("Error Occured")
+    let token = jwt.sign({email,action:"verification"},process.env.JWT_SECRET)
+    const request = mailjet.post("send",{version:'v3.1'})
+      .request({
+        "Messages":[{
+          "From": {
+            "Email": "rajeev@loyalytics.in",
+            "Name": "Poster"
+          },
+          "To": [
+            {
+              "Email": email,
+              "Name": name
+            }
+          ],
+          "Subject": "Poster Invitation",
+          "TextPart": "You have been invited to Poster",
+          "HTMLPart": `<div style="text-align:center;"><h3>You have been invited to Poster.<br/> Click on the link to Accept the Invitation<br/> <a href='${process.env.DOMAIN}/verify/?token=${token}'><button>Accept Invitation</button></a></h3></div>`,
+          "CustomID": "AppGettingStartedTest"
+        }]
+      })
+    request
+      .then(res=>{
+        console.log("Email sent")
+      })
+      .catch(error=>{
+      console.log("Unable to send Email");
+    })
+    res.sendStatus(200)
   }
   catch(err){
-    if(err.message=="Email Already Exist")
-      res.status(403).json({code:11000,message:err.message})
-    else
-      res.sendStatus(403)
+    if(err.message=="Email Already Exist") return res.status(403).json({code:11000,message:err.message})
+    res.sendStatus(403)
   }
 })
 
 app.patch('/api/users/invited',async(req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(await dbase.isUserSuperUser(decoded.id)){
-      var { name, email, accesses } = req.body;
-      for(channel of Object.keys(accesses))
-        if(!accesses[channel].read && !accesses[channel].write && !accesses[channel].delete)
-          delete accesses[channel]
-      let result = await dbase.updateUser(name,email,{accesses})
-      if(!result.err)
-        res.sendStatus(200)
-      else if(result?.err?.code==11000)
-        throw new Error("Email Already Exist")
-      else{
-        throw new Error("Error Occured")
-      }
-    }
-    else 
-      throw new Error("Unauthorised")
+    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorised")
+    var { name, email, accesses } = req.body;
+    for(channel of Object.keys(accesses))
+      if(!accesses[channel].read && !accesses[channel].write && !accesses[channel].delete)
+        delete accesses[channel]
+    let result = await dbase.updateUser(name,email,{accesses})
+    if(result?.err?.code==11000) throw new Error("Email Already Exist")
+    if(result?.err) throw new Error("Error Occured")
+    res.sendStatus(200)
   }
   catch(err){
     console.log(err)
-    if(err.message=="Email Already Exist")
-      res.status(403).json({code:11000,message:err.message})
-    else
-      res.status(403).json({code:10000,message:err.message})
+    if(err.message!="Email Already Exist") return res.status(403).json({code:10000,message:err.message})
+    res.status(403).json({code:11000,message:err.message})
   }
 })
 
@@ -190,19 +164,17 @@ app.post('/api/channels/name',async(req,res)=>{
 app.post('/api/channels/',async(req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(await dbase.isUserSuperUser(decoded.id)){
-      let channels = await dbase.channelList()
-      for(let [index, channel] of channels.entries()){
-        let meta = await dbase.getMetaChannel(channel)
-        if(meta?.creationTimestamp && meta?.createdBy)
-          channels[index] = {name:channel,...meta}
-        else
-          channels[index] = {name:channel,creationTimestamp:1669075200000,createdBy:"[Auto-Generated]"}
+    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorised")
+    let channels = await dbase.channelList()
+    for(let [index, channel] of channels.entries()){
+      let meta = await dbase.getMetaChannel(channel)
+      if(!(meta?.creationTimestamp && meta?.createdBy)){
+        channels[index] = {name:channel,creationTimestamp:1669075200000,createdBy:"[Auto-Generated]"}
+        continue;
       }
-      res.json(channels)
+      channels[index] = {name:channel,...meta}
     }
-    else 
-      throw new Error("Unauthorised")
+    res.json(channels)
   }
   catch(err){
     res.sendStatus(403)
@@ -212,12 +184,10 @@ app.post('/api/channels/',async(req,res)=>{
 app.delete('/api/channels',async (req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(await dbase.isUserSuperUser(decoded.id))
-      var ack = await dbase.deleteChannel(req.body.name)  
-    if(ack.acknowledged)
-      res.json({status:"ok"})
-    else
-      throw new Error("Error Deleting Channel")
+    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorized")
+    let ack = await dbase.deleteChannel(req.body.name)  
+    if(!ack.acknowledged) throw new Error("Error Deleting Channel")
+    res.json({status:"ok"})  
   }
   catch(err){
     res.status(403).json({status:"error"})
@@ -227,15 +197,14 @@ app.delete('/api/channels',async (req,res)=>{
 app.put('/api/channels',async(req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(await dbase.isUserSuperUser(decoded.id)){
-      var sUser = await dbase.getUserById(decoded.id)
-      if(sUser.error)throw new Error("No Such SuperUser")
-      var ack = await dbase.addChannel(req.body.name)
-      if(ack?.error?.code==409) return res.status(403).json({error:ack.error})
-      if(ack?.error?.code==500) throw new Error("Error Creating Channel")
-      var doc = await dbase.addChannelMeta(req.body.name,sUser.name,new Date().getTime())
-      if(doc.acknowledged) res.json({status:"ok"})
-    }
+    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorized")
+    var sUser = await dbase.getUserById(decoded.id)
+    if(sUser.error)throw new Error("No Such SuperUser")
+    var ack = await dbase.addChannel(req.body.name)
+    if(ack?.error?.code==409) return res.status(403).json({error:ack.error})
+    if(ack?.error?.code==500) throw new Error("Error Creating Channel")
+    var doc = await dbase.addChannelMeta(req.body.name,sUser.name,new Date().getTime())
+    if(doc.acknowledged) res.json({status:"ok"})
   }
   catch(err){
     console.log(err)
@@ -246,16 +215,15 @@ app.put('/api/channels',async(req,res)=>{
 app.post("/api/issuperuser",async(req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(await dbase.isUserSuperUser(decoded.id))
-      res.json({status:"ok"})
-    else 
-      throw new Error("Unauthorised")
+    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorised")
+    res.json({status:"ok"})
   }
   catch(err){
     res.sendStatus(403)
   }
 })
 
+//TEST API
 app.get('/api/test',(req,res)=>{
   dbase.getInvitedUsers().then(list=>{
     res.json(list)
@@ -276,7 +244,6 @@ app.get('/verify',async (req,res)=>{
 })
 
 app.post('/api/password/newuser',async (req,res)=>{
-  console.log(req.body)
   try{
     let decoded = jwt.verify(req.cookies.invitee,process.env.JWT_SECRET)
     let check = await dbase.getUserById(decoded.id)

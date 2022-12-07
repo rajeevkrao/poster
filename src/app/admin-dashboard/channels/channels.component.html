@@ -1,11 +1,11 @@
 <div nz-row nzJustify="end">
   <div nz-col [nzSpan]="4">
-    <button nz-button (click)="this.isChannelModalOpen=true" nzType="primary">Create Channel</button>
+    <button class="create-action" nz-button (click)="isChannelModalOpen=true" nzType="primary">Create Channel</button>
   </div>
 </div>
 
-<div *ngIf="!this.channels.length">No Channels Added Yet!</div>
-<nz-table *ngIf="this.channels.length" [nzBordered]="true" #basicTable [nzData]="['']">
+<div *ngIf="!channels.length">No Channels Added Yet!</div>
+<nz-table *ngIf="channels.length" [nzBordered]="true" #basicTable [nzData]="['']">
   <thead>
     <tr>
       <th>Channel Name</th>

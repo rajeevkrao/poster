@@ -3,11 +3,11 @@ import { CookieService } from 'ngx-cookie-service';
 import { ApiService } from './api.service';
 import { Router } from '@angular/router';
 
-import { NzMessageService } from 'ng-zorro-antd/message';
+/* import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { IUser } from '../models/users.model'
 
-import { RefreshService } from '../refresh.service';
+import { RefreshService } from '../shared/refresh.service'; */
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -15,40 +15,40 @@ import { RefreshService } from '../refresh.service';
   styleUrls: ['./admin-dashboard.component.css']
 })
 export class AdminDashboardComponent implements OnInit {
-  users:Array<IUser> = []
-  channels:Array<string> = []
+  /* users:Array<IUser> = []
+  channels:Array<string> = [] 
 
-  submitError = ""
+   submitError = "" 
 
-  //Invite User Modal Properties
+  //Invite User Modal Properties - temp
   isInviteUserModalOpen:boolean = false;
   inviteUserModalTitle:string = "Invite New User";
   inviteUserModalName:string = "";
   inviteUserModalEmail:string = "";
   inviteUserModalAccesses:any = {};
-  inviteUserModalCreateMode:boolean = true;
+  inviteUserModalCreateMode:boolean = true; */
 
   constructor(
     private router:Router,
     private cookieService:CookieService,
-    private api:ApiService,
-    private message:NzMessageService,
-    private refreshService:RefreshService
+    private api:ApiService
   ){
     
   }
 
   ngOnInit(){
     //Verifying jwt token
-    this.api.jwtVerify(this.cookieService.get('session')).catch(err=>{
-      this.router.navigate(['/login'])
+    this.api.jwtVerify(this.cookieService.get('session'))
+    .subscribe({
+      error:err=>this.router.navigate(['/login'])
     })
 
-    //Listening to Channels Changes
+    /* //Listening to Channels Changes
     this.refreshService.refreshChannels.subscribe({
       next:res=>loadData(this),
       error:err=>console.log(err)
     })
+    
 
     //load Channels and Users
     async function loadData(classRef:any):Promise<void>{
@@ -56,11 +56,11 @@ export class AdminDashboardComponent implements OnInit {
       classRef.getUsers()
     }
 
-    loadData(this);
+    loadData(this); */
   }
 
     //Retrieving Channels
-  async getChannels(){
+/*   async getChannels(){
     await this.api.getChannels().then((res)=>{
       this.channels=res
     }).catch(err=>{
@@ -70,22 +70,26 @@ export class AdminDashboardComponent implements OnInit {
 
   //Retrieving Users
   getUsers(){
-    this.api.getUsers().then((res)=>{
-      this.users=res
-      this.users.forEach((user,index)=>{
-        this.users[index].accesses = this.channels.reduce((channels:any,channel)=>{
-          if(Object.keys(user.accesses).includes(channel))
-            channels[channel] = this.users[index].accesses[channel]
-          return channels
-        },{})
+    this.api.getUsers()
+      .subscribe({
+        next:(res)=>{
+          this.users=res
+          this.users.forEach((user,index)=>{
+            this.users[index].accesses = this.channels.reduce((channels:any,channel)=>{
+              if(Object.keys(user.accesses).includes(channel))
+                channels[channel] = this.users[index].accesses[channel]
+              return channels
+            },{})
+          })
+        },
+        error:err=>{
+          console.log(err)
+          this.message.error("Cannot Retreive Users")
+        }
       })
-    }).catch(err=>{
-      console.log(err)
-      this.message.error("Cannot Retreive Users")
-    })
-  }
+  } */
 
-  deleteUserConfirm(id:string){
+  /* deleteUserConfirm(id:string){
     this.api.deleteUser(id).then(()=>{
       this.ngOnInit();
       this.message.success("User Deleted")
@@ -122,7 +126,6 @@ export class AdminDashboardComponent implements OnInit {
       this.inviteUserModalEmail=""
       this.inviteUserModalCreateMode=true
     }
-    /* eval("console.log(`Hello world`)") */
     this.isInviteUserModalOpen=true;
   }
 
@@ -175,6 +178,6 @@ export class AdminDashboardComponent implements OnInit {
         else
           this.message.error("User cannot be added due to some error")
       })
-  }
+  } */
 
 }

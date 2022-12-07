@@ -1,10 +1,10 @@
 <div nz-row nzJustify="end">
   <div nz-col [nzSpan]="4">
-    <button nz-button (click)="showInviteUserModal(-1)" nzType="primary">Invite User</button>
+    <button class="create-action" nz-button (click)="showInviteUserModal(-1)" nzType="primary">Invite User</button>
   </div>
   </div>
-  <div *ngIf="!this.users.length">No Users Added Yet!</div>
-  <nz-table *ngIf="this.users.length" [nzBordered]="true" #basicTable [nzData]="['']">
+  <div *ngIf="!users.length">No Users Added Yet!</div>
+  <nz-table *ngIf="users.length" [nzBordered]="true" #basicTable [nzData]="['']">
     <thead>
       <tr>
         <th>Name</th>
@@ -18,7 +18,7 @@
       <tr *ngFor="let user of users;let i = index;">
         <td>{{user.name}}</td>
         <td>{{user.email}}</td>
-        <td style="display:inline-flex;"><p class="accesses" *ngFor="let item of user.accesses | keyvalue">{{item.key}}</p></td>
+        <td><div style="display:inline-flex;"><p class="accesses" *ngFor="let item of user.accesses | keyvalue">{{item.key}}</p></div></td>
         <td>{{user.invitationStatus}}</td>
         <td><button nz-button (click)="showInviteUserModal(i)" class="action">Edit</button>
           <button

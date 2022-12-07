@@ -32,15 +32,11 @@ export class LoginComponent implements OnInit{
         next:res=>{
           this.loginError=""
           this.router.navigate([res.redirect])
+        },
+        error:err=>{
+          this.loginError="Username or Password doesn't Exist"
         }
       })
-    /* .then(res=>{
-      this.loginError=""
-      this.router.navigate(["/admin"])
-    })
-    .catch(err=>{
-      this.loginError="Username or Password doesn't Exist"
-    }) */
   }
 
   onSubmit(form:NgForm){

@@ -16,10 +16,16 @@ form.login .error{
   color:red;
 }
 
-div.label{
+h5.label{
   margin:1vh 0;
   text-align:left;
 }
+
+input:-internal-autofill-selected {
+  background-color: rgba(0,0,0,0) !important;
+}
+
+
 
 /* form.login h3{
   color:white;

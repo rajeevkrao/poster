@@ -12,74 +12,33 @@ export class ApiService extends GlobalApiService {
     super(http);
   }
 
-  getMetaChannels():Promise<void|any>{
-    return new Promise(async(resolve,reject)=>{
-      await this.http.post(this.apiUrl+"/channels",{},{withCredentials:true})
-        .subscribe({
-          next:res=>resolve(res),
-          error:err=>this.error(err,reject)
-        })
-    })
+  getMetaChannels():Observable<void|any>{
+      return this.http.post(this.apiUrl+"/channels",{},{withCredentials:true})
   }
 
-  getUsers():Promise<void|any>{
-    return new Promise((resolve,reject)=>{
-      this.http.post(this.apiUrl+"/users/invited",{},{withCredentials:true})
-        .subscribe(({
-          next:res=>resolve(res),
-          error:err=>this.error(err,reject)
-        }))
-    })
+  getUsers():Observable<void|any>{
+      return this.http.post(this.apiUrl+"/users/invited",{},{withCredentials:true})
+
   }
 
-  getChannels():Promise<void|any>{
-    return new Promise((resolve,reject)=>{
-      this.http.post(this.apiUrl+"/channels/name",{},{withCredentials:true})
-        .subscribe(({
-          next:res=>resolve(res),
-          error:err=>this.error(err,reject)
-        }))
-    })
+  getChannels():Observable<void|any>{
+      return this.http.post(this.apiUrl+"/channels/name",{},{withCredentials:true})
   }
 
-  addUser(name:string,email:string,accesses:any):Promise<void|any>{
-    return new Promise((resolve,reject)=>{
-      this.http.put(this.apiUrl+"/users/invited",{name,email,accesses},{withCredentials:true,responseType:"text"})
-        .subscribe({
-          next:res=>resolve(res),
-          error:err=>this.error(err,reject)
-        })
-    })
+  addUser(name:string,email:string,accesses:any):Observable<void|any>{
+    return this.http.put(this.apiUrl+"/users/invited",{name,email,accesses},{withCredentials:true,responseType:"text"})
   }
 
-  updateUser(name:string,email:string,accesses:any):Promise<void|any>{
-    return new Promise((resolve,reject)=>{
-      this.http.patch(this.apiUrl+"/users/invited",{name,email,accesses},{withCredentials:true,responseType:"text"})
-        .subscribe({
-          next:res=>resolve(res),
-          error:err=>this.error(err,reject)
-        })
-    })
+  updateUser(name:string,email:string,accesses:any):Observable<void|any>{
+    return this.http.patch(this.apiUrl+"/users/invited",{name,email,accesses},{withCredentials:true,responseType:"text"})
   }
 
-  deleteUser(id:string):Promise<void|any>{
-    return new Promise((resolve,reject)=>{
-      this.http.delete(this.apiUrl+"/users/invited",{withCredentials:true, body:{id}})
-        .subscribe({
-          next:res=>resolve(res),
-          error:err=>this.error(err,reject)
-        })
-    })
+  deleteUser(id:string):Observable<void|any>{
+      return this.http.delete(this.apiUrl+"/users/invited",{withCredentials:true, body:{id}})
   }
 
-  deleteChannel(name:string):Promise<void|any>{
-    return new Promise((resolve,reject)=>{
-      this.http.delete(this.apiUrl+"/channels",{withCredentials:true,body:{name}})
-        .subscribe({
-          next:res=>resolve(res),
-          error:err=>this.error(err,reject)
-        })
-    })
+  deleteChannel(name:string):Observable<void|any>{
+      return this.http.delete(this.apiUrl+"/channels",{withCredentials:true,body:{name}})
   }
 
   addChannel(name:string):Observable<void|any>{

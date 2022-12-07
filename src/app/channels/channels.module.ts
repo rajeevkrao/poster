@@ -5,6 +5,7 @@ import { ChannelsRoutingModule } from './channels-routing.module';
 import { ChannelsComponent } from './channels.component';
 
 import { NzMessageModule } from 'ng-zorro-antd/message';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 import { CookieService } from 'ngx-cookie-service';
 
@@ -19,7 +20,8 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
     CommonModule,
     ChannelsRoutingModule,
     NzMessageModule,
-    NzGridModule
+    NzGridModule,
+    NzButtonModule
   ],
   providers:[CookieService,]
 })

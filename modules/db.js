@@ -8,16 +8,24 @@ class Mongo{
   constructor(){
     this.uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0.tkwubms.mongodb.net/?retryWrites=true&w=majority`
     this.client = new MongoClient(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    this.client.connect().then(()=>{
+    (async()=>{
+      try{
+        await this.client.connect()
+        console.log("Database Connected")
+      }catch(err){
+        console.log("Error Connecting Database")
+      }
+    })()
+    /* this.client.connect().then(()=>{
       console.log("Database Connected")
-    })
+    }) */
   }
 
-  connect(){
+  /* connect(){
     return new Promise(async(resolve,reject)=>{
       resolve(this.client.connect())
     })
-  }
+  } */
 
   async channelList(){
     try{
@@ -146,13 +154,14 @@ class Mongo{
 
   async verifySuperUser(email){
     try{
-      
       let doc = await this.client.db("meta").collection("users").findOne({email},{superUser:1})
-      this.client.close();
-      if(doc?.superUser)
+
+      if(!doc?.superUser) return false
+      return true;
+      /* if(doc?.superUser)
         return true
       else  
-        return false
+        return false */
     }
     catch(err){
       console.log(err)
@@ -161,9 +170,7 @@ class Mongo{
 
   async getUserIdByEmail(email){
     try{
-      
       let doc = await this.client.db("meta").collection("users").findOne({email},{_id:1})
-      
       if(!doc) throw new Error("No such User Exist")
       return doc._id.toString()
     }
@@ -174,9 +181,7 @@ class Mongo{
 
   async getUserIdById(id){
     try{
-      
       let doc = await this.client.db("meta").collection("users").findOne({_id:ObjectId(id)},{_id:1})
-      
       if(!doc) throw new Error("No such User Exist")
       return doc._id.toString()
     }
@@ -190,12 +195,13 @@ class Mongo{
       
       let doc = await this.client.db('meta').collection('users').findOne({email},{passHash:1})
       
-      if(!doc)
-        return false;
+      if(!doc || passHash != doc.passHash) return false;
+      return true;
+      /* if(!doc) return false;
       if(passHash == doc.passHash)
         return true;
       else  
-        return false;
+        return false; */
     }
     catch(err){
       return {err}
@@ -206,13 +212,15 @@ class Mongo{
     try{
       
       let doc = await this.client.db("meta").collection('users').findOne({_id:ObjectId(id)},{superUser:1})
-      
-      if(!doc)
+
+      if(!doc || !doc.superUser) return false;
+      return true
+      /* if(!doc)
         return false;
       if(doc.superUser)
         return true;
       else  
-        return false;
+        return false; */
     }
     catch(err){
       console.log(err)
@@ -257,19 +265,17 @@ class Mongo{
 
   async getClient(){
     try{
-      return await this.client
+      return await this.client.connect()
     }
     catch(err){
       console.log(err)
     }
   }
 
-  
-
-  error(err,reject){
+/*   error(err,reject){
     reject(err)
     console.log(err)
-  }
+  } */
 }
 
 module.exports = Mongo;

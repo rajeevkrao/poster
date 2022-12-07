@@ -1,52 +1,57 @@
-import { Component, OnInit, OnChanges, Input, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, SimpleChanges } from '@angular/core';
 
 import { ApiService } from '../../api.service';
-import { RefreshService } from 'src/app/refresh.service';
+
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { DataService } from 'src/app/shared/data.service';
+import { RefreshService } from 'src/app/shared/refresh.service';
+
+import { IUser } from 'src/app/models/users.model';
 
 @Component({
   selector: 'app-users-modal',
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css']
 })
-export class ModalComponent implements OnInit, OnChanges {
+export class ModalComponent implements OnInit {
 
-  isInviteUserModalOpen:boolean = false;
+  /* isInviteUserModalOpen:boolean = false; */
   inviteUserModalTitle!:string;
   inviteUserModalName:string = "";
   inviteUserModalEmail:string = "";
   inviteUserModalAccesses:any = {};
-  inviteUserModalCreateMode:boolean = true;
+  inviteUserModalCreateMode:boolean = true; //True - Create Mode | False - Edit Mode
 
+  users:Array<IUser> = []
   channels:Array<string> = []
 
   _isModalOpen: boolean=false;
-  /* _index:number = -1; */
-  channelModalName:string = "";
   submitError:string="";
-
-  /* @Input() set channel(val:Array<string>){
-    this.channels=val
-  } */
 
   @Input() /* index!:number */
    set index(val: number){
+    this.channels.forEach((channel)=>{
+      this.inviteUserModalAccesses[channel]={
+        read:false,write:false,delete:false
+      }
+    })
     if(val==-1){
       this.inviteUserModalTitle="Invite New User"  
       this.inviteUserModalCreateMode=true;
+      this.inviteUserModalName=""
+      this.inviteUserModalEmail=""
     } 
     else{
-      this.inviteUserModalTitle="Editting for"
+      this.inviteUserModalName=this.users[val].name
+      this.inviteUserModalEmail=this.users[val].email
+      this.inviteUserModalTitle="Editting for: "+this.users[val].name
       this.inviteUserModalCreateMode=false;
+      Object.keys(this.users[val].accesses).forEach((channel:string)=>{
+        this.inviteUserModalAccesses[channel]=this.users[val].accesses[channel]
+      })
     } 
-  }/*
-  get index(){
-    reutrn this._index
-  } */
-
-  // @Output() indexChange: EventEmitter<number> = new EventEmitter<number>();
+  }
 
   @Input()
   set isModalOpen(val: boolean) {
@@ -67,20 +72,20 @@ export class ModalComponent implements OnInit, OnChanges {
 
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+/*   ngOnChanges(changes: SimpleChanges): void {
     if(changes['isModalOpen'])
-      this.channelModalName=""
-  }
+      {}
+  } */
 
   ngOnInit():void{
-    this.dataService.channels.subscribe({
-      next:res=>{
-        
-      }
-    })
     this.dataService.users.subscribe({
       next:res=>{
-        console.log(res)
+        this.users = res
+      }
+    })
+    this.dataService.channels.subscribe({
+      next:res=>{
+        this.channels = res
       }
     })
   }
@@ -98,38 +103,55 @@ export class ModalComponent implements OnInit, OnChanges {
       return;
     }
 
+    let flag:boolean=false
+
+    for(let channel of Object.keys(this.inviteUserModalAccesses))
+      if(this.inviteUserModalAccesses[channel].read || this.inviteUserModalAccesses[channel].write || this.inviteUserModalAccesses[channel].delete)
+        flag=true
+
+
+    if(!flag){
+      this.submitError="At least one permission needs to be granted for at least one channel"
+      return
+    }
+
+
     this.submitError=""
 
     if(this.inviteUserModalCreateMode)
       this.api.addUser(this.inviteUserModalName,this.inviteUserModalEmail,this.inviteUserModalAccesses)
-      .then(res=>{
-        this.message.success("User Successfully Added")
-        this.isInviteUserModalOpen=false;
-        this.ngOnInit()
-      })
-      .catch(err=>{
-        let error = JSON.parse(err?.error)
-        console.log(error.errcode)
-        if(error?.code==11000)
-          this.message.error(error.message)
-        else
-          this.message.error("User cannot be added due to some error")
-        
-      })
+        .subscribe({
+          next:res=>{
+            this.message.success("User Successfully Added")
+            this.refreshService.refreshChannels.next(true)
+            this.isModalOpen=false;
+          },
+          error:err=>{
+            let error = JSON.parse(err?.error)
+            console.log(error.errcode)
+            if(error?.code==11000)
+              this.message.error(error.message)
+            else
+              this.message.error("User cannot be added due to some error")
+            
+          }
+        })
     else this.api.updateUser(this.inviteUserModalName,this.inviteUserModalEmail,this.inviteUserModalAccesses)
-      .then(res=>{
-        this.message.success("User Updated Successfully")
-        this.isInviteUserModalOpen=false;
-        this.ngOnInit()
-      })
-      .catch(err=>{
-        let error = JSON.parse(err?.error)
-        console.log(error.errcode)
-        if(error?.code==11000)
-          this.message.error(error.message)
-        else
-          this.message.error("User cannot be added due to some error")
-      })
+        .subscribe({
+          next:res=>{
+            this.message.success("User Updated Successfully")
+            this.refreshService.refreshChannels.next(true)
+            this.isModalOpen=false;
+          },
+          error:err=>{
+            let error = JSON.parse(err?.error)
+            console.log(error.errcode)
+            if(error?.code==11000)
+              this.message.error(error.message)
+            else
+              this.message.error("User cannot be added due to some error")
+          }
+        })
   }
 
   closeModal(){

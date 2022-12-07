@@ -17,6 +17,22 @@ export class AppComponent {
   ngRoute:string = "";
   loggedIn:boolean = false
   isSuperUser:boolean = false
+  
+
+
+  _darkmode = false;
+  set darkmode(val:boolean){
+    this._darkmode = val
+    const style = document.getElementById('theme') as HTMLLinkElement;
+    if (val) {
+      style.href = 'dark.css';
+    } else {
+      style.href = 'default.css';
+    }
+  }
+  get darkmode(){
+    return this._darkmode
+  }
 
   constructor(
     protected testApi: GlobalApiService,
@@ -39,7 +55,11 @@ export class AppComponent {
   }
 
   checkSuperUser(){
-    this.testApi.isSuperUser().then(()=>this.isSuperUser=true).catch(err=>this.isSuperUser=false)
+    this.testApi.isSuperUser()
+    .subscribe({
+      next:()=>this.isSuperUser=true,
+      error:err=>this.isSuperUser=false
+    })
   }
 
   checkLoginStatus(){
@@ -50,10 +70,14 @@ export class AppComponent {
   }
 
   checkServer(){
-    this.testApi.test().then(res=>{
-      this.test = true;
-    }).catch(err=>{
-      this.test = false;
+    this.testApi.test()
+    .subscribe({
+      next:res=>{
+        this.test = true;
+      },
+      error:err=>{
+        this.test = false;
+      }
     })
   }
 

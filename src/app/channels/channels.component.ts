@@ -24,8 +24,11 @@ export class ChannelsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.api.jwtVerify(this.cookieService.get('session')).catch(err=>{
-      this.router.navigate(['/login'])
+    this.api.jwtVerify(this.cookieService.get('session'))
+    .subscribe({
+      error:err=>{
+        this.router.navigate(['/login'])
+      }
     })
 
     this.loadChannels();

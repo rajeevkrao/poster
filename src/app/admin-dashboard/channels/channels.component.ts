@@ -5,7 +5,7 @@ import { ApiService } from '../api.service';
 
 import { IChannels } from 'src/app/models/channels.model';
 
-import { RefreshService } from 'src/app/refresh.service';
+import { RefreshService } from 'src/app/shared/refresh.service';
 
 @Component({
   selector: 'app-channels',
@@ -38,12 +38,17 @@ export class ChannelsComponent implements OnInit {
   }
 
   loadChannels(){
-    this.api.getMetaChannels().then(res=>this.channels = res).catch(err=>console.log(err)).finally(()=>{
-      this.channels.forEach(channel=>{
-        let time = new Date(channel.creationTimestamp)
-        channel.date = time.toLocaleDateString('en-IN');
+    this.api.getMetaChannels()
+      .subscribe({
+        next:res=>this.channels = res,
+        error:err=>console.log(err)
       })
-    })
+      .add(()=>{
+        this.channels.forEach(channel=>{
+          let time = new Date(channel.creationTimestamp)
+          channel.date = time.toLocaleDateString('en-IN');
+        })
+      })
   }
 
   modalTest(){
@@ -51,14 +56,17 @@ export class ChannelsComponent implements OnInit {
   }
 
   deleteChannelConfirm(name:string):void{
-    this.api.deleteChannel(name).then(()=>{
-      this.ngOnInit();
-      this.refreshService.refreshChannels.next(true)
-      this.message.success("Channel Deleted")
-    })
-    .catch(()=>{
-      this.message.error("Error Deleting the Channel")
-    })
+    this.api.deleteChannel(name)
+      .subscribe({
+        next:()=>{
+          this.ngOnInit();
+          this.refreshService.refreshChannels.next(true)
+          this.message.success("Channel Deleted")
+        },
+        error:()=>{
+          this.message.error("Error Deleting the Channel")
+        }
+      })
   }
 
 }

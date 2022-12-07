@@ -30,10 +30,17 @@ export class PasswordComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.api.jwtVerify(this.cookieService.get('invitee')).catch(err=>{
+    this.api.jwtVerify(this.cookieService.get('invitee'))
+      .subscribe({
+        error:err=>{
+          console.log(err)
+          this.router.navigate(['/'])
+        }
+      })
+      /* .catch(err=>{
       console.log(err)
       this.router.navigate(['/'])
-    })
+    }) */
 
     this.validateForm = this.fb.group({
       password: [null, [Validators.required]],

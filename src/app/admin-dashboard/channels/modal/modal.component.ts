@@ -1,7 +1,10 @@
 import { Component, Input, OnInit, OnChanges, EventEmitter, Output, SimpleChanges } from '@angular/core';
-import { RefreshService } from 'src/app/refresh.service';
+import { RefreshService } from 'src/app/shared/refresh.service';
 import { ApiService } from '../../api.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { DataService } from 'src/app/shared/data.service';
+
+import { IUser } from 'src/app/models/users.model';
 
 @Component({
   selector: 'app-channels-modal',
@@ -26,7 +29,8 @@ export class ModalComponent implements  OnInit,OnChanges{
   constructor(
     private api:ApiService,
     private refreshService:RefreshService,
-    private message:NzMessageService
+    private message:NzMessageService,
+    private dataService:DataService
   ){
 
   }
@@ -37,6 +41,8 @@ export class ModalComponent implements  OnInit,OnChanges{
   }
 
   ngOnInit():void{
+    
+
   }
 
   handleModalOk(){

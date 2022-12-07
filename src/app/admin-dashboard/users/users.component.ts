@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Data, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { IUser } from 'src/app/models/users.model';
 
 import { ApiService } from '../api.service';
@@ -8,7 +8,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { CookieService } from 'ngx-cookie-service';
 
-import { RefreshService } from 'src/app/refresh.service';
+import { RefreshService } from 'src/app/shared/refresh.service';
 import { DataService } from 'src/app/shared/data.service';
 
 @Component({
@@ -45,9 +45,12 @@ export class UsersComponent implements OnInit {
 
   ngOnInit(){
     //Verifying jwt token
-    this.api.jwtVerify(this.cookieService.get('session')).catch(err=>{
-      this.router.navigate(['/login'])
-    })
+    this.api.jwtVerify(this.cookieService.get('session'))
+      .subscribe({
+        error:err=>{
+          this.router.navigate(['/login'])
+        }
+      })
 
     //Listening to Channels Changes
     this.refreshService.refreshChannels.subscribe({
@@ -56,8 +59,6 @@ export class UsersComponent implements OnInit {
     })
 
     //load Channels and Users
-    
-
     this.loadData();
   }
 
@@ -66,31 +67,44 @@ export class UsersComponent implements OnInit {
     this.getUsers()
   }
 
-  async getChannels(){
-    await this.api.getChannels().then((res)=>{
-      this.dataService.channels.next(res)
-      this.channels=res
-    }).catch(err=>{
-      this.message.error("Cannot Retreive Channels")
+  //Retreiving Channel Names
+  getChannels():Promise<void>{
+    return new Promise((resolve,reject)=>{
+      this.api.getChannels()
+        .subscribe({
+          next:(res)=>{
+            this.dataService.channels.next(res)
+            this.channels=res
+            resolve()
+          },
+          error:err=>{
+            this.message.error("Cannot Retreive Channels")
+          }
+        })
     })
+    
   }
 
   //Retrieving Users
   getUsers(){
-    this.api.getUsers().then((res)=>{
-      this.users=res
-      this.users.forEach((user,index)=>{
-        this.users[index].accesses = this.channels.reduce((channels:any,channel)=>{
-          if(Object.keys(user.accesses).includes(channel))
-            channels[channel] = this.users[index].accesses[channel]
-          return channels
-        },{})
+    this.api.getUsers()
+      .subscribe({
+        next:(res)=>{
+          this.users=res
+          this.users.forEach((user,index)=>{
+            this.users[index].accesses = this.channels.reduce((channels:any,channel)=>{
+              if(Object.keys(user.accesses).includes(channel))
+                channels[channel] = this.users[index].accesses[channel]
+              return channels
+            },{})
+          })
+          this.dataService.users.next(this.users)
+        },
+        error:err=>{
+          console.log(err)
+          this.message.error("Cannot Retreive Users")
+        }
       })
-      this.dataService.users.next(this.users)
-    }).catch(err=>{
-      console.log(err)
-      this.message.error("Cannot Retreive Users")
-    })
   }
 
   showInviteUserModal(index:number){
@@ -99,13 +113,16 @@ export class UsersComponent implements OnInit {
   }
 
   deleteUserConfirm(id:string){
-    this.api.deleteUser(id).then(()=>{
-      this.ngOnInit();
-      this.message.success("User Deleted")
-    })
-    .catch(()=>{
-      this.message.error("Error Deleting the User")
-    })
+    this.api.deleteUser(id)
+      .subscribe({
+        next:()=>{
+          this.loadData();
+          this.message.success("User Deleted")
+        },
+        error:()=>{
+          this.message.error("Error Deleting the User")
+        }
+      })
   }
 
   deleteUserCancel(){

@@ -1,0 +1,11 @@
+button.action{
+  margin:.2em
+}
+
+p.accesses:not(:last-child)::after{
+  content:",\00a0"
+}
+
+button.create-action{
+  margin-bottom:2vh;
+}
