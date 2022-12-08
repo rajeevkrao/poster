@@ -65,7 +65,8 @@ export class PasswordComponent implements OnInit {
     this.passwordError=""
     this.api.setPassword(password).subscribe({
       next:res=>{
-        this.router.navigate(['/logout'])
+        this.cookieService.delete("session")
+        this.router.navigate(['/login'])
       },
       error:err=>{
         console.log(err)

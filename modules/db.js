@@ -55,7 +55,7 @@ class Mongo{
       return doc
     }
     catch(err){
-      console.log(doc)
+      console.log(err)
     }
   }
 
@@ -269,6 +269,21 @@ class Mongo{
     }
     catch(err){
       console.log(err)
+    }
+  }
+
+  async userPermissionOfChannel(id, channel, permission){
+    try{
+      let doc = await this.client.db("meta").collection("users").findOne({_id:ObjectId(id)}, {accesses:1})
+      if(!doc) throw new Error(404)
+      if(permission.read && !doc.accesses[channel].read) return false
+      if(permission.write && !doc.accesses[channel].write) return false
+      if(permission.delete && !doc.accesses[channel].read) return false
+      return true
+    }
+    catch(err){
+      if(err.message="404") return {err:{message:"Not a valid User"}}        
+
     }
   }
 

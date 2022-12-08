@@ -44,4 +44,8 @@ export class ChannelsComponent implements OnInit {
       }
     })
   }
+
+  redirect(channel:string):void{
+    this.router.navigate(['/channels',channel])
+  }
 }

@@ -3,7 +3,7 @@
 <h1>Available Channels</h1>
 
 <div nz-row [nzGutter]="16">
-  <div class="gutter-row" nz-col [nzSpan]="6" *ngFor="let channel of channels"><button nz-button style="height:25vh;width:100%">{{channel}}</button></div>
+  <div class="gutter-row channel" nz-col [nzSpan]="6" *ngFor="let channel of channels"><button class='channel' (click)="redirect(channel)" nz-button>{{channel}}</button></div>
   
 </div>
 
