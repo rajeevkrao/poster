@@ -12,6 +12,6 @@ export class LogoutComponent{
     private router:Router
   ){
     this.cookieService.delete("session")
-    this.router.navigateByUrl('/')
+    this.router.navigateByUrl('/login')
   }
 }

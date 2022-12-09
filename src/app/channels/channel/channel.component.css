@@ -1,0 +1,16 @@
+div.container{
+    margin:1vh 0;
+}
+
+div.buttons{
+    position:absolute;
+    right:1vw;
+}
+
+div.buttons > * {
+    margin: 0.5em;
+}
+
+button.create-action{
+    margin-bottom:2vh;
+  }

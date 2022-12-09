@@ -278,12 +278,25 @@ class Mongo{
       if(!doc) throw new Error(404)
       if(permission.read && !doc.accesses[channel].read) return false
       if(permission.write && !doc.accesses[channel].write) return false
-      if(permission.delete && !doc.accesses[channel].read) return false
+      if(permission.delete && !doc.accesses[channel].delete) return false
       return true
     }
     catch(err){
       if(err.message="404") return {err:{message:"Not a valid User"}}        
 
+    }
+  }
+
+  async fetchPostsOfChannel(channel){
+    try{
+      let docs = await this.client.db("channels").collection(channel).aggregate([
+        { $match: {meta:{$ne:true}} }
+      ]).toArray()
+      console.log(docs)
+      return docs
+    }
+    catch(err){
+      console.log(err)
     }
   }
 

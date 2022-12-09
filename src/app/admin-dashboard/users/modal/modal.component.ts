@@ -31,11 +31,6 @@ export class ModalComponent implements OnInit {
 
   @Input() /* index!:number */
    set index(val: number){
-    this.channels.forEach((channel)=>{
-      this.inviteUserModalAccesses[channel]={
-        read:false,write:false,delete:false
-      }
-    })
     if(val==-1){
       this.inviteUserModalTitle="Invite New User"  
       this.inviteUserModalCreateMode=true;
@@ -51,6 +46,7 @@ export class ModalComponent implements OnInit {
         this.inviteUserModalAccesses[channel]=this.users[val].accesses[channel]
       })
     } 
+    console.log(this.channels)
   }
 
   @Input()
@@ -86,6 +82,12 @@ export class ModalComponent implements OnInit {
     this.dataService.channels.subscribe({
       next:res=>{
         this.channels = res
+        this.channels.forEach((channel)=>{
+          this.inviteUserModalAccesses[channel]={
+            read:false,write:false,delete:false
+          }
+        })
+        console.log(this.channels)
       }
     })
   }

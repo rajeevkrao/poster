@@ -5,15 +5,15 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { DataService } from 'src/app/shared/data.service';
 
 @Component({
-  selector: 'app-channels-modal',
+  selector: 'app-posts-modal',
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css']
 })
 export class ModalComponent implements  OnInit,OnChanges{
   _isModalOpen: boolean=false;
-  channelModalName:string = "";
+  postModalContent:string = "";
+  postModalId:string = ''
   submitError:string="";
-  channelName:string=""
 
   @Input()
   set isModalOpen(val: boolean) {
@@ -36,7 +36,7 @@ export class ModalComponent implements  OnInit,OnChanges{
 
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['isModalOpen'])
-      this.channelModalName=""
+      this.postModalContent=""
   }
 
   ngOnInit():void{
@@ -45,24 +45,23 @@ export class ModalComponent implements  OnInit,OnChanges{
   }
 
   handleModalOk(){
-    this.channelModalName=this.channelModalName.trim()
-    if(this.channelModalName==""){
+    this.postModalContent=this.postModalContent.trim()
+    if(this.postModalContent==""){
       this.submitError="Channel Name Cannot Be Empty"
       return
     }
     this.submitError="" 
-    this.api.addChannel(this.channelModalName).subscribe({
+    /* this.api.addChannel(this.postModalContent).subscribe({
       next:res=>{
-        this.message.success(`Channel ${this.channelModalName} Created Successfully`)
+        this.message.success(`Channel ${this.postModalContent} Created Successfully`)
         this.refreshService.refreshChannels.next(true)
         this.isModalOpen=false
-        /* this.channelModalName="" */
       },error:err=>{
         console.log(err)
         if(err?.error?.error?.code==409) return this.message.error(err.error.error.message)
         return this.message.error("Error Creating Channel")
       }
-    })
+    }) */
   }
 
   closeModal(){

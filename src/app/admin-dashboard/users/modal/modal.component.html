@@ -2,18 +2,18 @@
   <ng-container *nzModalContent>
     <p>Name:</p>
     <input nz-input type="text" [(ngModel)]="inviteUserModalName"><br/><br/>
-    <ng-container *ngIf="this.inviteUserModalCreateMode">
+    <ng-container *ngIf="inviteUserModalCreateMode">
       <p>Email:</p>
       <input nz-input type="email" [(ngModel)]="inviteUserModalEmail"><br/><br/>
     </ng-container>
     
     <p>Channel Access</p>
-    <div *ngIf="!this.channels.length">No Channles Added!</div>
-    <nz-tabset>
+    <div *ngIf="!channels.length">No Channles Added!</div>
+    <nz-tabset *ngIf="channels.length">
       <nz-tab *ngFor="let channel of channels" [nzTitle]="channel">
-        <label nz-checkbox [(ngModel)]="this.inviteUserModalAccesses[channel].read">Read</label> 
-        <label nz-checkbox [(ngModel)]="this.inviteUserModalAccesses[channel].write">Write</label> 
-        <label nz-checkbox [(ngModel)]="this.inviteUserModalAccesses[channel].delete">Delete</label>
+        <label nz-checkbox [(ngModel)]="inviteUserModalAccesses[channel].read">Read</label> 
+        <label nz-checkbox [(ngModel)]="inviteUserModalAccesses[channel].write">Write</label> 
+        <label nz-checkbox [(ngModel)]="inviteUserModalAccesses[channel].delete">Delete</label>
       </nz-tab>
     </nz-tabset>
 
