@@ -16,8 +16,6 @@ global.jwt = jwt
 global.mailjet = mailjet
 global.crypto = crypto */
 
-const routes = {admin:{}}
-
 const PORT = 5000
 
 const app = express();
@@ -31,6 +29,8 @@ app.use(express.static('dist/poster'))
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+const routes = {admin:{}}
 
 routes.auth = require("./routes/auth")
 routes.admin.users = require("./routes/admin/users")

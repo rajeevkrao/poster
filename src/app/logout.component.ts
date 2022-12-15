@@ -1,4 +1,4 @@
-import { Component } from "@angular/core"
+import { Component, OnInit } from "@angular/core"
 import { Router } from "@angular/router";
 import { CookieService } from "ngx-cookie-service";
 
@@ -6,12 +6,19 @@ import { CookieService } from "ngx-cookie-service";
   selector: 'app-logout',
   template: '',
 })
-export class LogoutComponent{
+export class LogoutComponent implements OnInit{
   constructor(
     private cookieService:CookieService,
     private router:Router
   ){
-    this.cookieService.delete("session")
+    
+  }
+
+  ngOnInit(): void {
+    /* this.cookieService.delete("session")
+    this.cookieService.delete("invitee")
+    this.router.navigateByUrl('/login') */
+    this.cookieService.deleteAll()
     this.router.navigateByUrl('/login')
   }
 }

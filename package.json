@@ -37,6 +37,7 @@
     "mongodb": "^4.12.0",
     "ng-zorro-antd": "^14.2.0",
     "ngx-cookie-service": "^15.0.0",
+    "ngx-infinite-scroll": "^15.0.0",
     "node-mailjet": "^3.3.2",
     "readline-sync": "^1.4.10",
     "rxjs": "~7.5.0",

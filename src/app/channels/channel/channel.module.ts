@@ -14,6 +14,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+
 
 
 @NgModule({
@@ -32,7 +34,8 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
     NzInputModule,
     FormsModule,
     ReactiveFormsModule,
-    NzPopconfirmModule
+    NzPopconfirmModule,
+    InfiniteScrollModule
   ]
 })
 export class ChannelModule { }

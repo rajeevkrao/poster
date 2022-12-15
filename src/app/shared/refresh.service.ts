@@ -9,4 +9,6 @@ export class RefreshService {
   constructor() { }
 
   refreshChannels = new Subject<boolean>();
+
+  refreshPosts = new Subject<boolean>();
 }

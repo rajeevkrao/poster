@@ -46,7 +46,6 @@ export class ModalComponent implements OnInit {
         this.inviteUserModalAccesses[channel]=this.users[val].accesses[channel]
       })
     } 
-    console.log(this.channels)
   }
 
   @Input()
@@ -87,7 +86,6 @@ export class ModalComponent implements OnInit {
             read:false,write:false,delete:false
           }
         })
-        console.log(this.channels)
       }
     })
   }

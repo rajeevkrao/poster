@@ -16,19 +16,19 @@ export class ApiService extends GlobalApiService {
       return this.http.post(this.apiUrl+"/channels/name",{},{withCredentials:true})
   }
 
-  getPosts(channel:string|null):Observable<void|any>{
-    return this.http.post(this.apiUrl+'/posts',{channel},{withCredentials:true})
+  getPosts(channel:string|null, page?:number):Observable<void|any>{
+    return this.http.post(this.apiUrl+'/posts',{channel,page},{withCredentials:true})
   }
 
-  addPost(content:string):Observable<void|any>{
-    return this.http.put(this.apiUrl+'/posts',{content},{withCredentials:true})
+  addPost(content:string, channel:string|null):Observable<void|any>{
+    return this.http.put(this.apiUrl+'/posts',{content,channel},{withCredentials:true})
   }
 
-  updatePost(content:string, id:string):Observable<void|any>{
-    return this.http.put(this.apiUrl+'/posts',{content,id},{withCredentials:true})
+  updatePost(content:string, id:string, channel:string|null):Observable<void|any>{
+    return this.http.patch(this.apiUrl+'/posts',{channel,content,id},{withCredentials:true})
   }
 
-  deletePost(id:string):Observable<void|any>{
-    return this.http.delete(this.apiUrl+'/posts',{withCredentials:true,body:{id}})
+  deletePost(channel:string|null,postId:string):Observable<void|any>{
+    return this.http.delete(this.apiUrl+'/posts',{withCredentials:true,body:{channel,postId}})
   }
 }

@@ -1,7 +1,7 @@
-<nz-modal [(nzVisible)]="isModalOpen" [nzTitle]="'Create Post'" (nzOnCancel)="closeModal()" (nzOnOk)="handleModalOk()">
+<nz-modal [(nzVisible)]="isModalOpen" [nzTitle]="title" (nzOnCancel)="closeModal()" (nzOnOk)="handleModalOk()">
     <ng-container *nzModalContent>
-      <p>Enter Content for the Post:</p>
-      <input nz-input type="text" [(ngModel)]="postModalContent"><br/><br/>
+      <p>Enter Content of the Post:</p>
+      <input nz-input type="text" [(ngModel)]="postContent"><br/><br/>
   
       <div class="error" >{{submitError}}</div>
       

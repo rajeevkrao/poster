@@ -276,23 +276,37 @@ class Mongo{
     try{
       let doc = await this.client.db("meta").collection("users").findOne({_id:ObjectId(id)}, {accesses:1})
       if(!doc) throw new Error(404)
+      if(!doc.accesses[channel]) return false
       if(permission.read && !doc.accesses[channel].read) return false
       if(permission.write && !doc.accesses[channel].write) return false
       if(permission.delete && !doc.accesses[channel].delete) return false
       return true
     }
     catch(err){
-      if(err.message="404") return {err:{message:"Not a valid User"}}        
+      console.log(err)
+      if(err.message=="404") return {err:{message:"Not a valid User"}}        
 
     }
   }
 
-  async fetchPostsOfChannel(channel){
+  async isUserCreatedPost(postId, channel, userId){
     try{
+      let postData = await this.client.db('channels').collection(channel).findOne({_id:ObjectId(postId)})
+      console.log(postData.authorId!=userId)
+      if(postData.authorId!=userId) return false
+      return true;
+    }
+    catch(err){
+      console.log(err)
+    }
+  }
+
+  async fetchPostsOfChannel(channel, page=0){
+    try{
+      let limit = 10
       let docs = await this.client.db("channels").collection(channel).aggregate([
         { $match: {meta:{$ne:true}} }
-      ]).toArray()
-      console.log(docs)
+      ]).sort({creationTimestamp:-1}).skip(page*limit).limit(limit).toArray()
       return docs
     }
     catch(err){
@@ -300,6 +314,40 @@ class Mongo{
     }
   }
 
+  async addPostToChannel(id, channel, content){
+    try{
+      let user = await this.client.db('meta').collection("users").findOne({_id:ObjectId(id)},{name:1})
+      if(!user) throw new Error("User Doesn't Exist")
+      let docs = await this.client.db('channels').collection(channel).insertOne({
+        content, createdBy:user.name, creationTimestamp:Date.now(), authorId:id
+      })
+      return docs
+    }
+    catch(err){
+      console.log(err)
+    }
+  }
+
+  async editPostOfChannel(channel,postId, content){
+    try{
+      let doc = await this.client.db('channels').collection(channel).findOneAndUpdate({_id:ObjectId(postId)},{$set:{content, creationTimestamp:Date.now()}})
+      if(doc) return doc
+    }
+    catch(err){
+      return {err}
+    }
+  }
+
+  async deletePostOfChannel(channel,postId){
+    try{
+      let docs = await this.client.db('channels').collection(channel).deleteOne({_id:ObjectId(postId)})
+      return {acknowledged:true}
+    }
+    catch(err){
+      console.log(err)
+      return err
+    }
+  }
 /*   error(err,reject){
     reject(err)
     console.log(err)

@@ -5,7 +5,7 @@ var app = express.Router();
 app.post('/api/users/invited',async(req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorised")
+    if(!decoded?.superUser) throw new Error("Unauthorised")
     res.json(await dbase.getInvitedUsers())
   }
   catch(err){
@@ -16,7 +16,7 @@ app.post('/api/users/invited',async(req,res)=>{
 app.delete('/api/users/invited',async(req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorised")
+    if(!decoded?.superUser) throw new Error("Unauthorised")
     let result = await dbase.deleteUser(req.body.id)
     if(!result.acknowledged) throw new Error("Some Error")
     res.json(result)
@@ -30,7 +30,7 @@ app.delete('/api/users/invited',async(req,res)=>{
 app.put('/api/users/invited',async(req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorised")
+    if(!decoded?.superUser) throw new Error("Unauthorised")
     var { name, email, accesses } = req.body;
     for(channel of Object.keys(accesses))
       if(!accesses[channel].read && !accesses[channel].write && !accesses[channel].delete)
@@ -76,7 +76,7 @@ app.put('/api/users/invited',async(req,res)=>{
 app.patch('/api/users/invited',async(req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorised")
+    if(!decoded?.superUser) throw new Error("Unauthorised")
     var { name, email, accesses } = req.body;
     for(channel of Object.keys(accesses))
       if(!accesses[channel].read && !accesses[channel].write && !accesses[channel].delete)

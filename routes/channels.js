@@ -15,7 +15,7 @@ app.post('/api/channels/name',async(req,res)=>{
 app.post('/api/channels/',async(req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorised")
+    if(!decoded?.superUser) throw new Error("Unauthorised")
     let channels = await dbase.channelList(); 
     for(let [index, channel] of channels.entries()){
       let meta = await dbase.getMetaChannel(channel)
@@ -36,7 +36,7 @@ app.post('/api/channels/',async(req,res)=>{
 app.delete('/api/channels',async (req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorized")
+    if(!decoded?.superUser) throw new Error("Unauthorized")
     let ack = await dbase.deleteChannel(req.body.name)  
     if(!ack.acknowledged) throw new Error("Error Deleting Channel")
     res.json({status:"ok"})  
@@ -49,18 +49,19 @@ app.delete('/api/channels',async (req,res)=>{
 app.put('/api/channels',async(req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
-    if(!await dbase.isUserSuperUser(decoded.id)) throw new Error("Unauthorized")
+    if(!decoded?.superUser) throw new Error("Unauthorized")
     var sUser = await dbase.getUserById(decoded.id)
     if(sUser.error)throw new Error("No Such SuperUser")
     var ack = await dbase.addChannel(req.body.name)
     if(ack?.error?.code==409) return res.status(403).json({error:ack.error})
     if(ack?.error?.code==500) throw new Error("Error Creating Channel")
     var doc = await dbase.addChannelMeta(req.body.name,sUser.name,new Date().getTime())
-    if(doc.acknowledged) res.json({status:"ok"})
+    if(!doc.acknowledged) throw new Error("Error Creating Meta Document")
+    res.json({status:"ok"})
   }
   catch(err){
     console.log(err)
-    res.status(403).json({error:err})
+    res.status(403).json(err)
   }
 })
 

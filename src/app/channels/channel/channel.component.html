@@ -1,25 +1,34 @@
-<div class="container">
+<div
+  infinite-scroll
+  [infiniteScrollDistance]="scrollDistance"
+  [infiniteScrollUpDistance]="scrollUpDistance"
+  [infiniteScrollThrottle]="throttle"
+  (scrolled)="onScrollDown()"
+  (scrolledUp)="onUp()"
+ class="container">
 
     <div nz-row nzJustify="space-between">
         <div nz-col [nzSpan]="4">
             <h2>{{channelName}} channel</h2>
           </div>
         <div nz-col [nzSpan]="4">
-          <button class="create-action" nz-button (click)="isPostModalOpen=true" nzType="primary">Create Post</button>
+          <button class="create-action" nz-button (click)="addPost()" nzType="primary">Create Post</button>
         </div>
       </div>
 
     <h3 *ngIf="!posts.length">No Posts Created</h3>
 
-    <nz-card *ngFor="let post of posts">
+    <nz-card *ngFor="let post of posts; let i=index">
         <div class="buttons">
-            <button nz-button>Edit</button>
+            <button
+              (click)="editPost(i)"
+              nz-button>Edit</button>
             <button 
                 nz-button 
                 nzDanger
                 nz-popconfirm
                 nzPopconfirmTitle="Are you Sure you want to delete this Post?"
-                (nzOnConfirm)="['']"
+                (nzOnConfirm)="deletePost(post._id)"
                 nzOkText="Yes"
                 [nzOkDanger]="true"
                 nzCancelText="No">
@@ -32,4 +41,4 @@
 
 </div>
 
-<app-posts-modal [(isModalOpen)]="isPostModalOpen"></app-posts-modal>
+<app-posts-modal [(isModalOpen)]="isPostModalOpen" [postData]='editPostData' ></app-posts-modal>
