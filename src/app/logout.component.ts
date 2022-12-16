@@ -18,7 +18,8 @@ export class LogoutComponent implements OnInit{
     /* this.cookieService.delete("session")
     this.cookieService.delete("invitee")
     this.router.navigateByUrl('/login') */
-    this.cookieService.deleteAll()
+    this.cookieService.deleteAll('/')
+    /*this.cookieService.get('session')*/
     this.router.navigateByUrl('/login')
   }
 }

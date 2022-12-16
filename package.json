@@ -38,7 +38,7 @@
     "ng-zorro-antd": "^14.2.0",
     "ngx-cookie-service": "^15.0.0",
     "ngx-infinite-scroll": "^15.0.0",
-    "node-mailjet": "^3.3.2",
+    "node-mailjet": "^3.4.1",
     "readline-sync": "^1.4.10",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

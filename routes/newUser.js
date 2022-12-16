@@ -4,6 +4,7 @@ var app = express.Router();
 
 app.get('/verify',async (req,res)=>{
   try{
+    console.log(req.query.token)
     let decoded = jwt.verify(req.query.token,process.env.JWT_SECRET)
     if(decoded.action!='verification') throw new Error("Not a Verifying JWT")
     let id = await dbase.getUserIdByEmail(decoded.email)
@@ -11,6 +12,7 @@ app.get('/verify',async (req,res)=>{
     res.cookie('invitee', jwt.sign({ id }, process.env.JWT_SECRET/* ,{expiresIn:60*60*24*3} */)).redirect("/password")
   }
   catch(err){
+    console.log(err)
     res.status(403).send("Unauthorized")
   }
 })

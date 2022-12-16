@@ -54,7 +54,7 @@ app.put('/api/users/invited',async(req,res)=>{
           ],
           "Subject": "Poster Invitation",
           "TextPart": "You have been invited to Poster",
-          "HTMLPart": `<div style="text-align:center;"><h3>You have been invited to Poster.<br/> Click on the link to Accept the Invitation<br/> <a href='${process.env.DOMAIN}/verify/?token=${token}'><button>Accept Invitation</button></a></h3></div>`,
+          "HTMLPart": `<div style="text-align:center;"><h3>You have been invited to Poster.<br/> Click on the link to Accept the Invitation<br/> <a href='${process.env.DOMAIN}/verify?token=${token}'><button>Accept Invitation</button></a></h3></div>`,
           "CustomID": "AppGettingStartedTest"
         }]
       })

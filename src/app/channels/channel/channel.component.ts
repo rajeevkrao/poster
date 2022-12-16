@@ -89,6 +89,7 @@ export class ChannelComponent implements OnInit, OnChanges{
   }
 
   loadPosts(){
+
     this.api.getPosts(this.route.snapshot.paramMap.get('id')).subscribe({
       next:res=>{
         this.posts = res;
@@ -102,6 +103,12 @@ export class ChannelComponent implements OnInit, OnChanges{
       this.posts.forEach(post=>{
         post.timeRelation = formatRelative(post.creationTimestamp, new Date())
       })
+      /*window.scroll({ 
+           top: 0, 
+           left: 0, 
+           behavior: 'smooth' 
+      });*/
+      document.body.scrollTop = document.documentElement.scrollTop = 0;
     })
   }
 

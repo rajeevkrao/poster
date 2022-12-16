@@ -27,6 +27,13 @@ export class ModalComponent implements  OnInit{
 
   @Input() postModalId!:string
 
+  resetModal(){
+    this.title="Create Post"
+    this.postContent = ''
+      this.createMode = true;
+      this.postId = ''
+  }
+
   @Input() 
   set postData(val:any){
     if(val==null){
@@ -80,6 +87,7 @@ export class ModalComponent implements  OnInit{
           this.message.success(`Post Created`)
           this.refreshService.refreshPosts.next(true)
           this.isModalOpen=false
+          this.resetModal()
         },
         error:err=>{
           console.log(err)
@@ -93,6 +101,7 @@ export class ModalComponent implements  OnInit{
             this.message.success('Post Editted!')
             this.refreshService.refreshPosts.next(true)
             this.isModalOpen=false
+            this.resetModal()
           },
           error:err=>{
             console.log(err)

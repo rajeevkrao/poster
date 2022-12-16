@@ -4,7 +4,16 @@ var app = express.Router();
 
 app.post('/api/channels/name',async(req,res)=>{
   try{
-    jwt.verify(req.cookies.session,process.env.JWT_SECRET)
+    let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
+    
+    if(!decoded.superUser) {
+      let user = await dbase.getUserById(decoded.id)
+      let channels = (await dbase.channelList()).filter(channel=>{
+        if(user.accesses[channel]?.read)
+          return channel
+      })
+      return res.json(channels)
+    }
     res.json(await dbase.channelList())
   }
   catch(err){

@@ -105,7 +105,6 @@ class Mongo{
   async addChannel(name){
     try{
       let doc = await this.client.db("channels").createCollection(name)
-      console.log(doc)
       return doc
     }
     catch(err){
@@ -147,21 +146,14 @@ class Mongo{
     }
     catch(err){
       console.log(err)
-    }
-    
-    
+    } 
   }
 
   async verifySuperUser(email){
     try{
       let doc = await this.client.db("meta").collection("users").findOne({email},{superUser:1})
-
       if(!doc?.superUser) return false
       return true;
-      /* if(doc?.superUser)
-        return true
-      else  
-        return false */
     }
     catch(err){
       console.log(err)

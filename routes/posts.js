@@ -39,7 +39,8 @@ app.patch("/api/posts",async(req,res)=>{
     let { channel, id, content} = req.body
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
     if(!decoded?.superUser){
-      if(!await dbase.isUserCreatedPost(req.body.postId,req.body.channel,decoded.id))
+      console.log(id)
+      if(!await dbase.isUserCreatedPost(id,channel,decoded.id))
         return res.status(403).json({code:403,message:"This post is not created by You!"}) 
       if(!await dbase.userPermissionOfChannel(decoded.id, req.body.channel, {write:true}))
         return res.status(403).json({code:403,message:"You don't have write permission for this channel"})
@@ -60,8 +61,10 @@ app.delete('/api/posts',async (req,res)=>{
   try{
     let decoded = jwt.verify(req.cookies.session,process.env.JWT_SECRET)
     if(!decoded?.superUser){
-      if(!await dbase.isUserCreatedPost(req.body.postId,req.body.channel,decoded.id))
+      if(!await dbase.isUserCreatedPost(req.body.postId,req.body.channel,decoded.id)){
+        console.log("Reach")
         return res.status(403).json({code:403,message:"This post is not created by You!"}) 
+      }
       if(!await dbase.userPermissionOfChannel(decoded.id, req.body.channel, {delete:true}))
         return res.status(403).json({code:403,message:"You don't have delete permission for this channel"}) 
     }
