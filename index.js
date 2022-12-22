@@ -11,11 +11,6 @@ global.crypto = require("./modules/crypto")
 const mongo = require("./modules/db");
 global.dbase = new mongo();
 
-/* global.dbase = dbase
-global.jwt = jwt
-global.mailjet = mailjet
-global.crypto = crypto */
-
 const PORT = 5000
 
 const app = express();
@@ -41,6 +36,15 @@ app.use(routes.auth)
 app.use(routes.channels)
 app.use(routes.posts)
 app.use(routes.admin.users)
+
+//----SonarLint Tests-----------------
+
+var a = 1
+
+if(a=1)
+  console.log("hell")
+
+//------------------------------------
 
 /* for(route of Object.keys(routes)){
   if(typeof(route) != "object"){
