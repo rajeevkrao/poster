@@ -57,6 +57,8 @@ app.post('/api/test',(req,res)=>{
   res.status(200).send("Test OK");
 })
 
+
+
 app.get('*',(req,res)=>{
   res.sendFile(__dirname+"/dist/poster/index.html")
 })
