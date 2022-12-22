@@ -1,7 +1,7 @@
 export interface IUser{
-  _id?: string;
+  _id: string;
   name:string;
   email:string;
-  accesses:object;
+  accesses:any;
   invitationStatus:boolean;
 }
