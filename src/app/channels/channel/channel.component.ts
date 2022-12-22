@@ -75,7 +75,9 @@ export class ChannelComponent implements OnInit, OnChanges{
     console.log("Scrolled Down")
     this.api.getPosts(this.route.snapshot.paramMap.get('id'),++this.page).subscribe({
       next:res=>{
-        this.posts = [...this.posts,...res]
+        /* this.posts = [...this.posts,...res] */ //Little Slow it seems according to benchmarks
+        //Benchmark - https://www.measurethat.net/Benchmarks/Show/7699/0/array-concat-vs-spread-vs-push-spread-loop-apply#latest_results_block
+        this.posts.push.apply(this.posts,res)
       },
       error:err=>{
         this.message.error("Error Fetching Posts")
