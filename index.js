@@ -46,6 +46,7 @@ if(a=1)
 
 //------------------------------------
 
+
 /* for(route of Object.keys(routes)){
   if(typeof(route) != "object"){
     console.log(typeof(route))
