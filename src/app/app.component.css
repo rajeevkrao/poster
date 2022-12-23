@@ -20,9 +20,14 @@ nz-tag{
 }
 
 .server-info{
+  display: inline-flex;
   position:fixed;
   right:1vw;
   bottom: 1vh;
+}
+
+.server-info > *{
+  margin-left: 0.5em;
 }
 
 .logo {

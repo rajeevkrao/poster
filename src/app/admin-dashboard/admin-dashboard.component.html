@@ -1,11 +1,14 @@
 <nz-tabset>
   <nz-tab nzTitle="Invite Users">
-    <div nz-row nzJustify="end">
+    <app-users></app-users>
+    
+    <!-- <div nz-row nzJustify="end">
     <div nz-col [nzSpan]="4">
-      <button nz-button nzType="primary">Invite User</button>
+      <button nz-button (click)="showInviteUserModal()" nzType="primary">Invite User</button>
     </div>
     </div>
-    <nz-table #basicTable [nzData]="['']">
+    <div *ngIf="!users.length">No Users Added Yet!</div>
+    <nz-table *ngIf="users.length" [nzBordered]="true" #basicTable [nzData]="['']">
       <thead>
         <tr>
           <th>Name</th>
@@ -16,19 +19,56 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of users">
+        <tr *ngFor="let user of users;let i = index;">
           <td>{{user.name}}</td>
           <td>{{user.email}}</td>
-          <td style="display:inline-flex; word-wrap:break-word;"><p class="accesses" *ngFor="let item of user.accesses | keyvalue">{{item.key}}</p></td>
+          <td style="display:inline-flex;"><p class="accesses" *ngFor="let item of user.accesses | keyvalue">{{item.key}}</p></td>
           <td>{{user.invitationStatus}}</td>
-          <td><button>Edit</button></td>
+          <td><button nz-button (click)="showInviteUserModal(i)" class="action">Edit</button>
+            <button
+              nz-popconfirm
+              nzPopconfirmTitle="Are you Sure you want to delete this user?"
+              (nzOnConfirm)="deleteUserConfirm(user._id)"
+              (nzOnCancel)="deleteUserCancel()"
+              [nzOkDanger]="true"
+              nzOkText="Yes"
+              nzCancelText="No"
+              nzPopconfirmPlacement="top"
+              nz-button
+              nzDanger
+              class="action">
+                Delete
+            </button>
+          </td>
         </tr>
       </tbody>
-    </nz-table>
+    </nz-table> -->
   </nz-tab>
   <nz-tab nzTitle="Create Channel">
-    Create Channel
+    <app-channels></app-channels>
   </nz-tab>
 </nz-tabset>
 
+<!-- <nz-modal [(nzVisible)]="isInviteUserModalOpen" [nzTitle]="inviteUserModalTitle" (nzOnCancel)="handleInviteUserModalCancel()" (nzOnOk)="handleInviteUserModalOk()">
+  <ng-container *nzModalContent>
+    <p>Name:</p>
+    <input nz-input type="text" [(ngModel)]="inviteUserModalName"><br/><br/>
+    <ng-container *ngIf="inviteUserModalCreateMode">
+      <p>Email:</p>
+      <input nz-input type="email" [(ngModel)]="inviteUserModalEmail"><br/><br/>
+    </ng-container>
+    
+    <p>Channel Access</p>
+    <div *ngIf="!channels.length">No Channles Added!</div>
+    <nz-tabset>
+      <nz-tab *ngFor="let channel of channels" [nzTitle]="channel">
+        <label nz-checkbox [(ngModel)]="inviteUserModalAccesses[channel].read">Read</label> 
+        <label nz-checkbox [(ngModel)]="inviteUserModalAccesses[channel].write">Write</label> 
+        <label nz-checkbox [(ngModel)]="inviteUserModalAccesses[channel].delete">Delete</label>
+      </nz-tab>
+    </nz-tabset>
 
+    <div class="error" >{{submitError}}</div>
+    
+  </ng-container>
+</nz-modal> -->

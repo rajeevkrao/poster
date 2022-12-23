@@ -15,14 +15,17 @@
 
   let saltHash = crypto.sash(pass)
 
-  let doc = await mongo.createUser(name, email, saltHash, {superUser:true})
+  let doc = await mongo.createUser(name, email, {passHash:saltHash, superUser:true})
   
   if(doc && doc.err && doc.err.code == 11000)
     console.log("That email already Exist")
   else if(doc.acknowledged)
     console.log("Super User Created")
-  else
+  else{
     console.log("Error Occured")
+    console.log(doc.err)
+  }
+    
 
   process.exit();
 

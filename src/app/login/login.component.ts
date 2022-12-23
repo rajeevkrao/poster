@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, NgForm, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { NgForm, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ApiService } from './api.service';
 import { Router } from "@angular/router"
 
@@ -26,14 +26,17 @@ export class LoginComponent implements OnInit{
   }
 
   submitForm():void{
-    let {email, password} = this.validateForm.value;
-    this.api.login(email,password).then(res=>{
-      this.loginError=""
-      this.router.navigate(["/admin"])
-    })
-    .catch(err=>{
-      this.loginError="Username or Password doesn't Exist"
-    })
+    let { email, password } = this.validateForm.value;
+    this.api.login(email,password)
+      .subscribe({
+        next:res=>{
+          this.loginError=""
+          this.router.navigate([res.redirect])
+        },
+        error:err=>{
+          this.loginError="Username or Password doesn't Exist"
+        }
+      })
   }
 
   onSubmit(form:NgForm){

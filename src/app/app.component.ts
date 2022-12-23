@@ -17,28 +17,49 @@ export class AppComponent {
   ngRoute:string = "";
   loggedIn:boolean = false
   isSuperUser:boolean = false
+  
+
+
+  _darkmode = false;
+  set darkmode(val:boolean){
+    this._darkmode = val
+    const style = document.getElementById('theme') as HTMLLinkElement;
+    if (val) {
+      style.href = 'dark.css';
+    } else {
+      style.href = 'default.css';
+    }
+  }
+  get darkmode(){
+    return this._darkmode
+  }
 
   constructor(
     protected testApi: GlobalApiService,
     private router:Router,
     private cookieService:CookieService,
   ) {
-    router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e:any) => {
-       this.ngRoute=e.url;
-       this.checkServer();
-       this.checkLoginStatus();
-       this.checkSuperUser();
-      })
+    
   }
 
   ngOnInit(){
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e:any) => {
+      this.ngRoute=e.url;
+      this.checkServer();
+      this.checkLoginStatus();
+      this.checkSuperUser();
+     })
     this.checkServer();
     this.checkLoginStatus();
     this.checkSuperUser();
   }
 
   checkSuperUser(){
-    this.testApi.isSuperUser().then(()=>this.isSuperUser=true).catch(err=>this.isSuperUser=false)
+    this.testApi.isSuperUser()
+    .subscribe({
+      next:()=>this.isSuperUser=true,
+      error:err=>this.isSuperUser=false
+    })
   }
 
   checkLoginStatus(){
@@ -49,10 +70,14 @@ export class AppComponent {
   }
 
   checkServer(){
-    this.testApi.test().then(res=>{
-      this.test = true;
-    }).catch(err=>{
-      this.test = false;
+    this.testApi.test()
+    .subscribe({
+      next:res=>{
+        this.test = true;
+      },
+      error:err=>{
+        this.test = false;
+      }
     })
   }
 

@@ -15,6 +15,7 @@ import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
 import { LogoutComponent } from './logout.component';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
 registerLocaleData(en);
 
@@ -32,7 +33,8 @@ registerLocaleData(en);
     NzTagModule,
     NzLayoutModule,
     NzBreadCrumbModule,
-    NzMenuModule
+    NzMenuModule,
+    NzSwitchModule
   ],
   bootstrap: [AppComponent],
   providers: [

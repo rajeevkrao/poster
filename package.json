@@ -9,6 +9,12 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
+  "nodemonConfig": {
+    "ignore": [
+      "/dist"
+    ],
+    "delay": 500
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^15.0.0",
@@ -24,12 +30,15 @@
     "@angular/router": "^15.0.0",
     "bootstrap": "^5.2.3",
     "cookie-parser": "^1.4.6",
+    "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.12.0",
     "ng-zorro-antd": "^14.2.0",
     "ngx-cookie-service": "^15.0.0",
+    "ngx-infinite-scroll": "^15.0.0",
+    "node-mailjet": "^3.4.1",
     "readline-sync": "^1.4.10",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
@@ -46,6 +55,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
+    "less-plugin-clean-css": "^1.5.1",
     "typescript": "~4.8.2"
   }
 }

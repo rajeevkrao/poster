@@ -11,6 +11,7 @@
     <ul nz-menu nzTheme="dark" nzMode="horizontal">
       <li (click)="route('/')" *ngIf="ngRoute != '/'" nz-menu-item>Home</li>
       <li (click)="route('/admin')" *ngIf="ngRoute != '/admin' && loggedIn && isSuperUser" nz-menu-item>Admin</li>
+      <li (click)="route('/channels')" *ngIf="loggedIn && ngRoute != '/channels'" nz-menu-item>Channels</li>
       <li (click)="route('/login')" *ngIf="ngRoute != '/login' && !loggedIn" nz-menu-item>Login</li>
       <li (click)="route('/logout')" *ngIf="loggedIn" nz-menu-item>Logout</li>
     </ul>
@@ -23,7 +24,10 @@
 
 <!-- <mat-chip selected color="primary" class="server-info">Server: {{test}}</mat-chip> -->
 
-<nz-tag (click)="runTest()" class="server-info" [nzColor]="test?'#00ff00':'#ff0000'">Server: {{test?'Online':'Offline'}}</nz-tag>
+<div class="server-info">
+  <nz-switch [(ngModel)]="darkmode" nzCheckedChildren="🌙" nzUnCheckedChildren="☀️"></nz-switch>
+  <nz-tag (click)="runTest()" [nzColor]="test?'#00ff00':'#ff0000'">Server: {{test?'Online':'Offline'}}</nz-tag>
+</div>
 
 
 

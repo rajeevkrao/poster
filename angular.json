@@ -31,12 +31,27 @@
             ],
             "styles": [
               "src/styles.css",
-              "src/theme.less",
+              
               {
                 "input": "./node_modules/ng-zorro-antd/form/style/index.min.css",
                 "inject": false,
                 "bundleName": "nz-form"
-              }  
+              },
+              {
+                "input": "./node_modules/ng-zorro-antd/ng-zorro-antd.dark.css",
+                "inject": false,
+                "bundleName": "dark"
+              },
+              {
+                "input": "./node_modules/ng-zorro-antd/ng-zorro-antd.css",
+                "inject": false,
+                "bundleName": "default"
+              },
+              {
+                "input": "./node_modules/ng-zorro-antd/ng-zorro-antd.compact.css",
+                "inject": false,
+                "bundleName": "compact"
+              }
             ],
             "scripts": []
           },
