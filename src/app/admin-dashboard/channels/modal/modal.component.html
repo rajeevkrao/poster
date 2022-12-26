@@ -1,0 +1,9 @@
+<nz-modal [(nzVisible)]="isModalOpen" [nzTitle]="'Create Unique Channel'" (nzOnCancel)="closeModal()" (nzOnOk)="handleModalOk()">
+  <ng-container *nzModalContent>
+    <p>Unique Channel Name:</p>
+    <input nz-input type="text" [(ngModel)]="channelModalName"><br/><br/>
+
+    <div class="error" >{{submitError}}</div>
+    
+  </ng-container>
+</nz-modal>

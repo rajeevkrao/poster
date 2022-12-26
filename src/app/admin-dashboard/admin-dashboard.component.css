@@ -1,3 +1,2 @@
-p.accesses:not(:last-child)::after{
-  content:", "
-}
+
+
