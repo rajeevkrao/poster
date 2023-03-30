@@ -1,0 +1,43 @@
+<div nz-row nzJustify="end">
+  <div nz-col [nzSpan]="4">
+    <button class="create-action" nz-button (click)="showInviteUserModal(-1)" nzType="primary">Invite User</button>
+  </div>
+  </div>
+  <div *ngIf="!users.length">No Users Added Yet!</div>
+  <nz-table *ngIf="users.length" [nzBordered]="true" #basicTable [nzData]="['']">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Accesses</th>
+        <th>Invitation Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users;let i = index;">
+        <td>{{user.name}}</td>
+        <td>{{user.email}}</td>
+        <td><div style="display:inline-flex;"><p class="accesses" *ngFor="let item of user.accesses | keyvalue">{{item.key}}</p></div></td>
+        <td>{{user.invitationStatus}}</td>
+        <td><button nz-button (click)="showInviteUserModal(i)" class="action">Edit</button>
+          <button
+            nz-popconfirm
+            nzPopconfirmTitle="Are you Sure you want to delete this user?"
+            (nzOnConfirm)="deleteUserConfirm(user._id)"
+            (nzOnCancel)="deleteUserCancel()"
+            [nzOkDanger]="true"
+            nzOkText="Yes"
+            nzCancelText="No"
+            nzPopconfirmPlacement="top"
+            nz-button
+            nzDanger
+            class="action">
+              Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+
+  <app-users-modal [index]="UserModalIndex" [(isModalOpen)]="isUsersModalOpen" ></app-users-modal>
