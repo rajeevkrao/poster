@@ -33,7 +33,7 @@
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongodb": "^4.12.0",
     "ng-zorro-antd": "^14.2.0",
     "ngx-cookie-service": "^15.0.0",
